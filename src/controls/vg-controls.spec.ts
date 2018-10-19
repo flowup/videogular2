@@ -1,13 +1,12 @@
-import { VgControls } from './vg-controls';
+/* tslint:disable:no-magic-numbers */
+import { VgControlsComponent } from './vg-controls';
 import { VgControlsHidden } from './../core/services/vg-controls-hidden';
 import { ElementRef } from '@angular/core';
 import { VgAPI } from '../core/services/vg-api';
-
-
 import { VgStates } from '../core/states/vg-states';
 
 describe('Controls Bar', () => {
-    let controls: VgControls;
+    let controls: VgControlsComponent;
     let ref: ElementRef;
     let api: VgAPI;
     let hidden: VgControlsHidden;
@@ -26,7 +25,7 @@ describe('Controls Bar', () => {
             }
         };
 
-        controls = new VgControls(api, ref, hidden);
+        controls = new VgControlsComponent(api, ref, hidden);
     });
 
     afterEach(() => {

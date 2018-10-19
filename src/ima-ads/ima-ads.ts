@@ -1,15 +1,15 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 
-import { VgImaAds } from './vg-ima-ads';
+import { VgImaAdsComponent } from './vg-ima-ads';
 
 @NgModule({
     imports: [ CommonModule ],
     declarations: [
-        VgImaAds
+        VgImaAdsComponent
     ],
     exports: [
-        VgImaAds
+        VgImaAdsComponent
     ]
 })
 export class VgImaAdsModule {}

@@ -1,9 +1,9 @@
-import { VgBuffering } from './vg-buffering';
+import { VgBufferingComponent } from './vg-buffering';
 import { VgAPI } from '../core/services/vg-api';
 import { ElementRef } from '@angular/core';
 
 describe('Buffering', () => {
-    let vgBuffering: VgBuffering;
+    let vgBuffering: VgBufferingComponent;
     let ref: ElementRef;
     let api: VgAPI;
 
@@ -15,7 +15,7 @@ describe('Buffering', () => {
         };
 
         api = new VgAPI();
-        vgBuffering = new VgBuffering(ref, api);
+        vgBuffering = new VgBufferingComponent(ref, api);
     });
 
     describe('onPlayerReady', () => {

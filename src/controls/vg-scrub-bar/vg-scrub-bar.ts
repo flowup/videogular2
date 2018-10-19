@@ -81,7 +81,7 @@ import { Subscription } from 'rxjs';
         }
     ` ]
 })
-export class VgScrubBar implements OnInit, OnDestroy {
+export class VgScrubBarComponent implements OnInit, OnDestroy {
     @HostBinding('class.hide') hideScrubBar = false;
 
     @Input() vgFor: string;
@@ -231,14 +231,19 @@ export class VgScrubBar implements OnInit, OnDestroy {
     }
 
     @HostListener('keydown', ['$event'])
-    arrowAdjustVolume(event: KeyboardEvent): void {
+    arrowAdjustTime(event: KeyboardEvent): void {
         if (this.target) {
+            const TIME_STEP = 5000;
+            // TODO: Remove keycode
+            /* tslint:disable-next-line:no-magic-numbers */
             if (event.keyCode === 38 || event.keyCode === 39) {
                 event.preventDefault();
-                this.target.seekTime((this.target.time.current + 5000) / 1000, false);
+                this.target.seekTime((this.target.time.current + TIME_STEP) / 1000, false);
+            // TODO: Remove keycode
+            /* tslint:disable-next-line:no-magic-numbers */
             } else if (event.keyCode === 37 || event.keyCode === 40) {
                 event.preventDefault();
-                this.target.seekTime((this.target.time.current - 5000) / 1000, false);
+                this.target.seekTime((this.target.time.current - TIME_STEP) / 1000, false);
             }
         }
     }

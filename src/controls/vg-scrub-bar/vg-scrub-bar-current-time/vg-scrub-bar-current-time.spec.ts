@@ -1,9 +1,9 @@
-import { VgScrubBarCurrentTime } from './vg-scrub-bar-current-time';
+import { VgScrubBarCurrentTimeComponent } from './vg-scrub-bar-current-time';
 import { VgAPI } from '../../../core/services/vg-api';
 import { ElementRef } from '@angular/core';
 
 describe('Scrub bar current time', () => {
-    let scrubBarCurrentTime: VgScrubBarCurrentTime;
+    let scrubBarCurrentTime: VgScrubBarCurrentTimeComponent;
     let ref: ElementRef;
     let api: VgAPI;
 
@@ -17,7 +17,7 @@ describe('Scrub bar current time', () => {
 
         api = new VgAPI();
 
-        scrubBarCurrentTime = new VgScrubBarCurrentTime(ref, api);
+        scrubBarCurrentTime = new VgScrubBarCurrentTimeComponent(ref, api);
     });
 
     it('Should get media by id on init', () => {

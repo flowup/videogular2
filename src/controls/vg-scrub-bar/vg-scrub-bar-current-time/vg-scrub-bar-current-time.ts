@@ -45,7 +45,7 @@ import { Subscription } from 'rxjs';
         }
     ` ]
 })
-export class VgScrubBarCurrentTime implements OnInit, OnDestroy {
+export class VgScrubBarCurrentTimeComponent implements OnInit, OnDestroy {
     @Input() vgFor: string;
     @Input() vgSlider = false;
 

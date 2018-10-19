@@ -1,9 +1,9 @@
-import { VgScrubBarBufferingTime } from './vg-scrub-bar-buffering-time';
+import { VgScrubBarBufferingTimeComponent } from './vg-scrub-bar-buffering-time';
 import { VgAPI } from '../../../core/services/vg-api';
 import { ElementRef } from '@angular/core';
 
 describe('Scrub bar buffering time', () => {
-    let scrubBarBufferingTime: VgScrubBarBufferingTime;
+    let scrubBarBufferingTime: VgScrubBarBufferingTimeComponent;
     let ref: ElementRef;
     let api: VgAPI;
 
@@ -17,7 +17,7 @@ describe('Scrub bar buffering time', () => {
 
         api = new VgAPI();
 
-        scrubBarBufferingTime = new VgScrubBarBufferingTime(ref, api);
+        scrubBarBufferingTime = new VgScrubBarBufferingTimeComponent(ref, api);
     });
 
     it('Should get media by id on init', () => {

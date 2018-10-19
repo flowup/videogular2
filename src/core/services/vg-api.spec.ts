@@ -1,3 +1,4 @@
+/* tslint:disable:no-magic-numbers */
 import { VgAPI } from './vg-api';
 import { PlayableModel } from '../vg-media/i-playable';
 import { VgStates } from '../states/vg-states';

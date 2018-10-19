@@ -89,7 +89,7 @@ export interface Option {
         }
     ` ]
 })
-export class VgTrackSelector implements OnInit, OnDestroy {
+export class VgTrackSelectorComponent implements OnInit, OnDestroy {
     @Input() vgFor: string;
 
     elem: HTMLElement;

@@ -1,5 +1,5 @@
 import { NgModule, Provider } from '@angular/core';
-import { VgPlayer } from './vg-player/vg-player';
+import { VgPlayerComponent } from './vg-player/vg-player';
 import { VgMediaDirective } from './vg-media/vg-media';
 import { VgCuePointsDirective } from './vg-cue-points/vg-cue-points';
 import { VgAPI } from './services/vg-api';
@@ -40,7 +40,7 @@ export interface BitrateOption {
  */
 export function coreDirectives(): any[] {
     return [
-        VgPlayer, VgMediaDirective, VgCuePointsDirective
+        VgPlayerComponent, VgMediaDirective, VgCuePointsDirective
     ];
 }
 

@@ -38,7 +38,7 @@ import { Subscription } from 'rxjs';
         }
     ` ]
 })
-export class VgPlaybackButton implements OnInit, OnDestroy {
+export class VgPlaybackButtonComponent implements OnInit, OnDestroy {
     @Input() vgFor: string;
 
     elem: HTMLElement;
@@ -77,6 +77,8 @@ export class VgPlaybackButton implements OnInit, OnDestroy {
     @HostListener('keydown', ['$event'])
     onKeyDown(event: KeyboardEvent): void {
         // On press Enter (13) or Space (32)
+        // TODO: Remove keycode
+        /* tslint:disable-next-line:no-magic-numbers */
         if (event.keyCode === 13 || event.keyCode === 32) {
             event.preventDefault();
             this.updatePlaybackSpeed();

@@ -42,7 +42,7 @@ import { VgControlsHidden } from '../services/vg-controls-hidden';
     ` ],
     providers: [ VgAPI, VgFullscreenAPI, VgControlsHidden ]
 })
-export class VgPlayer implements AfterContentInit, OnDestroy {
+export class VgPlayerComponent implements AfterContentInit, OnDestroy {
     elem: HTMLElement;
 
     @HostBinding('class.fullscreen') isFullscreen = false;

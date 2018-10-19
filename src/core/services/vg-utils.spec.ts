@@ -1,3 +1,4 @@
+/* tslint:disable:no-magic-numbers */
 import { VgUtils } from './vg-utils';
 
 describe('Videogular Utils', () => {

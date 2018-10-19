@@ -1,10 +1,10 @@
-import { VgPlaybackButton } from './vg-playback-button';
+import { VgPlaybackButtonComponent } from './vg-playback-button';
 import { VgAPI } from '../../core/services/vg-api';
 import { ElementRef } from '@angular/core';
 import { VgStates } from '../../core/states/vg-states';
 
 describe('Playback Button', () => {
-    let playbackButton: VgPlaybackButton;
+    let playbackButton: VgPlaybackButtonComponent;
     let ref: ElementRef;
     let api: VgAPI;
 
@@ -27,7 +27,7 @@ describe('Playback Button', () => {
         };
 
 
-        playbackButton = new VgPlaybackButton(ref, api);
+        playbackButton = new VgPlaybackButtonComponent(ref, api);
     });
 
     it('Should set playbackIndex default value to 1', () => {

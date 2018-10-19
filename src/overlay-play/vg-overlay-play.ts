@@ -65,7 +65,7 @@ import { VgControlsHidden } from '../core/services/vg-controls-hidden';
         }
     ` ]
 })
-export class VgOverlayPlay implements OnInit, OnDestroy {
+export class VgOverlayPlayComponent implements OnInit, OnDestroy {
     @Input() vgFor: string;
     elem: HTMLElement;
     target: any;

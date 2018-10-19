@@ -80,7 +80,7 @@ import { Subscription } from 'rxjs';
         }
     ` ]
 })
-export class VgVolume implements OnInit, OnDestroy {
+export class VgVolumeComponent implements OnInit, OnDestroy {
     @Input() vgFor: string;
     @ViewChild('volumeBar') volumeBarRef: ElementRef;
 
@@ -138,9 +138,13 @@ export class VgVolume implements OnInit, OnDestroy {
 
     @HostListener('keydown', ['$event'])
     arrowAdjustVolume(event: KeyboardEvent): void {
+        // TODO: Remove keycode
+        /* tslint:disable-next-line:no-magic-numbers */
         if (event.keyCode === 38 || event.keyCode === 39) {
             event.preventDefault();
             this.setVolume(Math.max(0, Math.min(100, (this.getVolume() * 100) + 10)));
+        // TODO: Remove keycode
+        /* tslint:disable-next-line:no-magic-numbers */
         } else if (event.keyCode === 37 || event.keyCode === 40) {
             event.preventDefault();
             this.setVolume(Math.max(0, Math.min(100, (this.getVolume() * 100) - 10)));

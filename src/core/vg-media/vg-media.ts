@@ -191,7 +191,8 @@ export class VgMediaDirective implements OnInit, OnDestroy, PlayableModel {
         this.canPlayAllSubscription = combineLatest(
             canPlayAll,
             (...params) => {
-                const allReady: boolean = params.some((event: any) => event.target.readyState === 4);
+                const HAVE_ENOUGH_DATA = 4;
+                const allReady: boolean = params.some((event: any) => event.target.readyState === HAVE_ENOUGH_DATA);
 
                 if (allReady && !this.syncSubscription) {
                     this.startSync();

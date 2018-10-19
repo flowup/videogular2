@@ -1,9 +1,10 @@
-import { VgVolume } from './vg-volume';
+/* tslint:disable:no-magic-numbers */
+import { VgVolumeComponent } from './vg-volume';
 import { VgAPI } from '../../core/services/vg-api';
 import { ElementRef } from '@angular/core';
 
 describe('Volume control', () => {
-    let vgVol: VgVolume;
+    let vgVol: VgVolumeComponent;
     let ref: ElementRef;
     let api: VgAPI;
 
@@ -16,7 +17,7 @@ describe('Volume control', () => {
         };
 
         api = new VgAPI();
-        vgVol = new VgVolume(ref, api);
+        vgVol = new VgVolumeComponent(ref, api);
     });
 
     it('Should have isDragging set to false initially', () => {

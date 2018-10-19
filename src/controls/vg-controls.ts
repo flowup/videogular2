@@ -32,7 +32,7 @@ import { VgStates } from '../core/states/vg-states';
         }
     `]
 })
-export class VgControls implements OnInit, AfterViewInit, OnDestroy {
+export class VgControlsComponent implements OnInit, AfterViewInit, OnDestroy {
     elem: HTMLElement;
     target: any;
 

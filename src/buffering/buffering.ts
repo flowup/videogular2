@@ -1,15 +1,15 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 
-import { VgBuffering } from './vg-buffering';
+import { VgBufferingComponent } from './vg-buffering';
 
 @NgModule({
     imports: [ CommonModule ],
     declarations: [
-        VgBuffering
+        VgBufferingComponent
     ],
     exports: [
-        VgBuffering
+        VgBufferingComponent
     ]
 })
 export class VgBufferingModule {

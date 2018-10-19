@@ -1,9 +1,10 @@
-import { VgTimeDisplay } from './vg-time-display';
+/* tslint:disable:no-magic-numbers */
+import { VgTimeDisplayComponent } from './vg-time-display';
 import { ElementRef } from '@angular/core';
 import { VgAPI } from '../../core/services/vg-api';
 
 describe('Time Display', () => {
-    let timeDisplay: VgTimeDisplay;
+    let timeDisplay: VgTimeDisplayComponent;
     let ref: ElementRef;
     let api: VgAPI;
 
@@ -17,7 +18,7 @@ describe('Time Display', () => {
             }
         };
 
-        timeDisplay = new VgTimeDisplay(ref, api);
+        timeDisplay = new VgTimeDisplayComponent(ref, api);
     });
 
     it('Should have been defined', () => {

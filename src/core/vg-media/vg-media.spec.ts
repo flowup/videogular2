@@ -1,3 +1,4 @@
+/* tslint:disable:no-magic-numbers */
 import { MediaElementModel } from './i-media-element';
 import { VgMediaDirective } from './vg-media';
 import { VgAPI } from '../services/vg-api';

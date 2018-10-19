@@ -1,4 +1,5 @@
-import { VgScrubBar } from './vg-scrub-bar';
+/* tslint:disable:no-magic-numbers */
+import { VgScrubBarComponent } from './vg-scrub-bar';
 import { VgAPI } from '../../core/services/vg-api';
 import { ChangeDetectorRef, ElementRef } from '@angular/core';
 import { VgControlsHidden } from './../../core/services/vg-controls-hidden';
@@ -7,7 +8,7 @@ import { VgStates } from '../../core/states/vg-states';
 import { MediaElementModel } from '../../core/vg-media/i-media-element';
 
 describe('Scrub bar', () => {
-    let scrubBar: VgScrubBar;
+    let scrubBar: VgScrubBarComponent;
     let ref: ElementRef;
     let cdRef: ChangeDetectorRef;
     let api: VgAPI;
@@ -47,7 +48,7 @@ describe('Scrub bar', () => {
         media.vgMedia = (elem as any);
         vgControlsHiddenState = new VgControlsHidden();
 
-        scrubBar = new VgScrubBar(ref, api, vgControlsHiddenState);
+        scrubBar = new VgScrubBarComponent(ref, api, vgControlsHiddenState);
     });
 
     it('Should get media by id on init', () => {

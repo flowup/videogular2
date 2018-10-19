@@ -1,4 +1,4 @@
-import { VgOverlayPlay } from './vg-overlay-play';
+import { VgOverlayPlayComponent } from './vg-overlay-play';
 import { VgAPI } from '../core/services/vg-api';
 import { ElementRef } from '@angular/core';
 import { VgStates } from '../core/states/vg-states';
@@ -6,7 +6,7 @@ import { VgFullscreenAPI } from '../core/services/vg-fullscreen-api';
 import { VgControlsHidden } from '../core/services/vg-controls-hidden';
 
 describe('Videogular Player', () => {
-    let overlayPlay: VgOverlayPlay;
+    let overlayPlay: VgOverlayPlayComponent;
     let ref: ElementRef;
     let api: VgAPI;
     let fsAPI: VgFullscreenAPI;
@@ -28,7 +28,7 @@ describe('Videogular Player', () => {
 
         api = new VgAPI();
         fsAPI = new VgFullscreenAPI();
-        overlayPlay = new VgOverlayPlay(ref, api, fsAPI, controlsHidden);
+        overlayPlay = new VgOverlayPlayComponent(ref, api, fsAPI, controlsHidden);
     });
 
     it('Should get media by id on init', () => {

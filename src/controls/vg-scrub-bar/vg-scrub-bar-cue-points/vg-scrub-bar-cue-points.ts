@@ -42,7 +42,7 @@ import { Subscription } from 'rxjs';
         }
     ` ]
 })
-export class VgScrubBarCuePoints implements OnInit, OnChanges, OnDestroy, DoCheck {
+export class VgScrubBarCuePointsComponent implements OnInit, OnChanges, OnDestroy, DoCheck {
     @Input() vgCuePoints: TextTrackCueList;
     @Input() vgFor: string;
 

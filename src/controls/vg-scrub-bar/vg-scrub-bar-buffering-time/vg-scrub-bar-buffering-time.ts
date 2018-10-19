@@ -31,7 +31,7 @@ import { Subscription } from 'rxjs';
         }
     ` ]
 })
-export class VgScrubBarBufferingTime implements OnInit, OnDestroy {
+export class VgScrubBarBufferingTimeComponent implements OnInit, OnDestroy {
     @Input() vgFor: string;
 
     elem: HTMLElement;

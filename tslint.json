@@ -151,16 +151,17 @@
       "no-invalid-this": true,
       "no-invalid-template-strings": true,
       // "no-loop-statement": true,
-      // "no-magic-numbers": [
-      //   true,
-      //   -1,
-      //   0,
-      //   1,
-      //   2,
-      //   10,
-      //   100,
-      //   1000
-      // ],
+      "no-magic-numbers": [
+        true,
+        -1,
+        0,
+        1,
+        2,
+        10,
+        99.9,
+        100,
+        1000
+      ],
       "no-misused-new": true,
       "no-namespace": true,
       // "no-object-mutation": [true, {"ignore-prefix": "this."}],

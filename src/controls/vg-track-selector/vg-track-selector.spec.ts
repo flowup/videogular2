@@ -1,9 +1,10 @@
-import { VgTrackSelector } from './vg-track-selector';
+/* tslint:disable:no-magic-numbers */
+import { VgTrackSelectorComponent } from './vg-track-selector';
 import { VgAPI } from '../../core/services/vg-api';
 import { ElementRef } from '@angular/core';
 
 describe('Track Selector control', () => {
-    let vgTrackSelector: VgTrackSelector;
+    let vgTrackSelector: VgTrackSelectorComponent;
 
     function createSubtitleTrack(label: string, srclang: string, isDefault: boolean): HTMLTrackElement {
         const track: HTMLTrackElement = {} as HTMLTrackElement;
@@ -22,7 +23,7 @@ describe('Track Selector control', () => {
                     name
             }
         };
-        vgTrackSelector = new VgTrackSelector(ref, new VgAPI());
+        vgTrackSelector = new VgTrackSelectorComponent(ref, new VgAPI());
     });
 
     describe('onPlayerReady', () => {

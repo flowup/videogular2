@@ -100,7 +100,7 @@ import { Subscription } from 'rxjs';
         }
     ` ]
 })
-export class VgBuffering implements OnInit, OnDestroy {
+export class VgBufferingComponent implements OnInit, OnDestroy {
     @Input() vgFor: string;
 
     elem: HTMLElement;

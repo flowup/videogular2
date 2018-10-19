@@ -1,9 +1,9 @@
-import { VgScrubBarCuePoints } from './vg-scrub-bar-cue-points';
+import { VgScrubBarCuePointsComponent } from './vg-scrub-bar-cue-points';
 import { VgAPI } from '../../../core/services/vg-api';
 import { ElementRef, SimpleChange } from '@angular/core';
 
 describe('Scrub bar current time', () => {
-    let scrubBarCuePoints: VgScrubBarCuePoints;
+    let scrubBarCuePoints: VgScrubBarCuePointsComponent;
     let ref: ElementRef;
     let api: VgAPI;
 
@@ -22,7 +22,7 @@ describe('Scrub bar current time', () => {
 
         api = new VgAPI();
 
-        scrubBarCuePoints = new VgScrubBarCuePoints(ref, api);
+        scrubBarCuePoints = new VgScrubBarCuePointsComponent(ref, api);
     });
 
     it('Should create cue points when metadata is loaded', () => {

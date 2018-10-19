@@ -92,7 +92,7 @@ import { BitrateOption } from '../../core/core';
         }
     ` ]
 })
-export class VgQualitySelector implements OnChanges, OnDestroy {
+export class VgQualitySelectorComponent implements OnChanges, OnDestroy {
     @Input() bitrates: BitrateOption[];
 
     @Output() onBitrateChange: EventEmitter<BitrateOption> = new EventEmitter();
