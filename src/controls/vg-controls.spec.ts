@@ -1,15 +1,15 @@
-import {VgControls} from "./vg-controls";
-import {VgControlsHidden} from './../core/services/vg-controls-hidden';
-import {ElementRef} from "@angular/core";
-import {VgAPI} from "../core/services/vg-api";
+import { VgControls } from './vg-controls';
+import { VgControlsHidden } from './../core/services/vg-controls-hidden';
+import { ElementRef } from '@angular/core';
+import { VgAPI } from '../core/services/vg-api';
 
 
 import { VgStates } from '../core/states/vg-states';
 
 describe('Controls Bar', () => {
-    let controls:VgControls;
-    let ref:ElementRef;
-    let api:VgAPI;
+    let controls: VgControls;
+    let ref: ElementRef;
+    let api: VgAPI;
     let hidden: VgControlsHidden;
 
     beforeEach(() => {
@@ -21,9 +21,8 @@ describe('Controls Bar', () => {
 
         ref = {
             nativeElement: {
-                getAttribute: (name) => {
-                    return name;
-                }
+                getAttribute: (name) =>
+                    name
             }
         };
 
@@ -40,7 +39,7 @@ describe('Controls Bar', () => {
 
     it('Should listen for mouseenter and mouseleave events', () => {
 
-        let vgElem = document.createElement('vg-player');
+        const vgElem = document.createElement('vg-player');
 
         api.registerElement(vgElem);
 
@@ -51,7 +50,7 @@ describe('Controls Bar', () => {
     });
 
     it('Should hide controls after view init', () => {
-        spyOn(controls, 'hide').and.callFake(() => {});
+        spyOn(controls, 'hide').and.callFake(() => undefined);
 
         controls.vgAutohide = true;
 
@@ -61,7 +60,7 @@ describe('Controls Bar', () => {
     });
 
     it('Should show controls after view init', () => {
-        spyOn(controls, 'show').and.callFake(() => {});
+        spyOn(controls, 'show').and.callFake(() => undefined);
 
         controls.vgAutohide = false;
 
@@ -71,8 +70,8 @@ describe('Controls Bar', () => {
     });
 
     it('Should show controls', () => {
-        spyOn(window, 'clearTimeout').and.callFake(() => {});
-        spyOn(hidden, 'state').and.callFake(() => {});
+        spyOn(window, 'clearTimeout').and.callFake(() => undefined);
+        spyOn(hidden, 'state').and.callFake(() => undefined);
 
         controls.show();
 
@@ -82,7 +81,7 @@ describe('Controls Bar', () => {
     });
 
     it('Should hide controls when is playing', () => {
-        spyOn(hidden, 'state').and.callFake(() => {});
+        spyOn(hidden, 'state').and.callFake(() => undefined);
 
         controls.vgAutohide = true;
         api.medias = [{state: VgStates.VG_PLAYING}];
@@ -118,7 +117,7 @@ describe('Controls Bar', () => {
     });
 
     it('Should start hiding controls if media is playing', () => {
-        spyOn(controls, 'hide').and.callFake(() => {});
+        spyOn(controls, 'hide').and.callFake(() => undefined);
 
         controls.vgAutohide = true;
 
@@ -128,7 +127,7 @@ describe('Controls Bar', () => {
     });
 
     it('Should show controls if media is paused', () => {
-        spyOn(hidden, 'state').and.callFake(() => {});
+        spyOn(hidden, 'state').and.callFake(() => undefined);
 
         controls.vgAutohide = true;
 

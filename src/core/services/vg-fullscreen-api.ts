@@ -1,7 +1,7 @@
 import { EventEmitter, Injectable, QueryList } from '@angular/core';
 import { VgUtils } from './vg-utils';
-import { VgMedia } from '../vg-media/vg-media';
-import { Subscription ,  Observable, fromEvent } from 'rxjs';
+import { VgMediaDirective } from '../vg-media/vg-media';
+import { Subscription, fromEvent } from 'rxjs';
 
 @Injectable()
 export class VgFullscreenAPI {
@@ -12,18 +12,16 @@ export class VgFullscreenAPI {
     isFullscreen = false;
     isAvailable: boolean;
     videogularElement: HTMLElement;
-    medias: QueryList<VgMedia>;
+    medias: QueryList<VgMediaDirective>;
 
     fsChangeSubscription: Subscription;
     onChangeFullscreen: EventEmitter<any> = new EventEmitter();
 
-    constructor() {
-    }
-
-    init(elem: HTMLElement, medias: QueryList<VgMedia>) {
+    init(elem: HTMLElement, medias: QueryList<VgMediaDirective>): void {
         this.videogularElement = elem;
         this.medias = medias;
 
+        // tslint:disable-next-line:variable-name
         const APIs = {
             w3: {
                 enabled: 'fullscreenEnabled',
@@ -75,7 +73,7 @@ export class VgFullscreenAPI {
             }
         };
 
-        for (let browser in APIs) {
+        for (const browser in APIs) {
             if (APIs[ browser ].enabled in document) {
                 this.polyfill = APIs[ browser ];
                 break;
@@ -83,7 +81,7 @@ export class VgFullscreenAPI {
         }
 
         if (VgUtils.isiOSDevice()) {
-            this.polyfill = APIs.ios
+            this.polyfill = APIs.ios;
         }
 
         this.isAvailable = (this.polyfill != null);
@@ -116,21 +114,20 @@ export class VgFullscreenAPI {
         });
     }
 
-    onFullscreenChange() {
+    onFullscreenChange(): void {
         this.isFullscreen = !!document[ this.polyfill.element ];
         this.onChangeFullscreen.emit(this.isFullscreen);
     }
 
-    toggleFullscreen(element: any = null) {
+    toggleFullscreen(element: any = null): void {
         if (this.isFullscreen) {
             this.exit();
-        }
-        else {
+        } else {
             this.request(element);
         }
     }
 
-    request(elem: any) {
+    request(elem: any): void {
         if (!elem) {
             elem = this.videogularElement;
         }
@@ -149,18 +146,17 @@ export class VgFullscreenAPI {
                 }
 
                 this.enterElementInFullScreen(elem);
-            }
-            else {
+            } else {
                 this.enterElementInFullScreen(this.videogularElement);
             }
         }
     }
 
-    enterElementInFullScreen(elem: any) {
+    enterElementInFullScreen(elem: any): void {
         elem[ this.polyfill.request ]();
     }
 
-    exit() {
+    exit(): void {
         this.isFullscreen = false;
         this.onChangeFullscreen.emit(false);
 

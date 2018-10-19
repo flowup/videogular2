@@ -9,7 +9,7 @@ import { Subscription } from 'rxjs';
     selector: 'vg-volume',
     encapsulation: ViewEncapsulation.None,
     template: `
-        <div 
+        <div
             #volumeBar
             class="volumeBar"
             tabindex="0"
@@ -97,38 +97,37 @@ export class VgVolume implements OnInit, OnDestroy {
         this.isDragging = false;
     }
 
-    ngOnInit() {
+    ngOnInit(): void {
         if (this.API.isPlayerReady) {
             this.onPlayerReady();
-        }
-        else {
+        } else {
             this.subscriptions.push(this.API.playerReadyEvent.subscribe(() => this.onPlayerReady()));
         }
     }
 
-    onPlayerReady() {
+    onPlayerReady(): void {
         this.target = this.API.getMediaById(this.vgFor);
         this.ariaValue = this.getVolume() * 100;
     }
 
-    onClick(event: { clientX: number }) {
+    onClick(event: { clientX: number }): void {
         this.setVolume(this.calculateVolume(event.clientX));
     }
 
-    onMouseDown(event: { clientX: number }) {
+    onMouseDown(event: { clientX: number }): void {
         this.mouseDownPosX = event.clientX;
         this.isDragging = true;
     }
 
     @HostListener('document:mousemove', [ '$event' ])
-    onDrag(event: { clientX: number }) {
+    onDrag(event: { clientX: number }): void {
         if (this.isDragging) {
             this.setVolume(this.calculateVolume(event.clientX));
         }
     }
 
     @HostListener('document:mouseup', [ '$event' ])
-    onStopDrag(event: { clientX: number }) {
+    onStopDrag(event: { clientX: number }): void {
         if (this.isDragging) {
             this.isDragging = false;
             if (this.mouseDownPosX === event.clientX) {
@@ -138,25 +137,24 @@ export class VgVolume implements OnInit, OnDestroy {
     }
 
     @HostListener('keydown', ['$event'])
-    arrowAdjustVolume(event: KeyboardEvent) {
+    arrowAdjustVolume(event: KeyboardEvent): void {
         if (event.keyCode === 38 || event.keyCode === 39) {
             event.preventDefault();
-            this.setVolume(Math.max(0, Math.min(100,(this.getVolume() * 100) + 10)));
-        }
-        else if (event.keyCode === 37 || event.keyCode === 40) {
+            this.setVolume(Math.max(0, Math.min(100, (this.getVolume() * 100) + 10)));
+        } else if (event.keyCode === 37 || event.keyCode === 40) {
             event.preventDefault();
-            this.setVolume(Math.max(0, Math.min(100,(this.getVolume() * 100) - 10)));
+            this.setVolume(Math.max(0, Math.min(100, (this.getVolume() * 100) - 10)));
         }
     }
 
-    calculateVolume(mousePosX: number) {
+    calculateVolume(mousePosX: number): number {
         const recObj = this.volumeBarRef.nativeElement.getBoundingClientRect();
         const volumeBarOffsetLeft: number = recObj.left;
         const volumeBarWidth: number = recObj.width;
         return (mousePosX - volumeBarOffsetLeft) / volumeBarWidth * 100;
     }
 
-    setVolume(vol: number) {
+    setVolume(vol: number): void {
         this.target.volume = Math.max(0, Math.min(1, vol / 100));
         this.ariaValue = this.target.volume * 100;
     }
@@ -165,7 +163,7 @@ export class VgVolume implements OnInit, OnDestroy {
         return this.target ? this.target.volume : 0;
     }
 
-    ngOnDestroy() {
+    ngOnDestroy(): void {
         this.subscriptions.forEach(s => s.unsubscribe());
     }
 }

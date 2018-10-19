@@ -17,13 +17,13 @@ export interface Option {
                  [class.vg-icon-closed_caption]="!trackSelected">
                 {{ trackSelected || '' }}
             </div>
-            
-            <select class="trackSelector" 
+
+            <select class="trackSelector"
                     (change)="selectTrack($event.target.value)"
                     tabindex="0"
                     aria-label="track selector"
                     [attr.aria-valuetext]="ariaValue">
-                <option 
+                <option
                     *ngFor="let track of tracks"
                     [value]="track.id"
                     [selected]="track.selected === true">
@@ -52,7 +52,7 @@ export interface Option {
             display: flex;
             flex-grow: 1;
             align-items: center;
-            
+
             padding: 0;
             margin: 5px;
         }
@@ -94,7 +94,7 @@ export class VgTrackSelector implements OnInit, OnDestroy {
 
     elem: HTMLElement;
     target: any;
-    tracks: Array<Option>;
+    tracks: Option[];
     trackSelected: string;
 
     subscriptions: Subscription[] = [];
@@ -105,19 +105,18 @@ export class VgTrackSelector implements OnInit, OnDestroy {
         this.elem = ref.nativeElement;
     }
 
-    ngOnInit() {
+    ngOnInit(): void {
         if (this.API.isPlayerReady) {
             this.onPlayerReady();
-        }
-        else {
+        } else {
             this.subscriptions.push(this.API.playerReadyEvent.subscribe(() => this.onPlayerReady()));
         }
     }
 
-    onPlayerReady() {
+    onPlayerReady(): void {
         this.target = this.API.getMediaById(this.vgFor);
 
-        const subs: Array<Option> = Array.from((this.API.getMasterMedia().elem as HTMLMediaElement).children)
+        const subs: Option[] = Array.from((this.API.getMasterMedia().elem as HTMLMediaElement).children)
             .filter((item: HTMLElement) => item.tagName === 'TRACK')
             .filter((item: HTMLTrackElement) => item.kind === 'subtitles')
             .map((item: HTMLTrackElement) => ({
@@ -140,7 +139,7 @@ export class VgTrackSelector implements OnInit, OnDestroy {
         this.ariaValue = track.label;
     }
 
-    selectTrack(trackId: string) {
+    selectTrack(trackId: string): void {
         this.trackSelected = (trackId === 'null') ? null : trackId;
 
         this.ariaValue = 'No track selected';
@@ -156,7 +155,7 @@ export class VgTrackSelector implements OnInit, OnDestroy {
             });
     }
 
-    ngOnDestroy() {
+    ngOnDestroy(): void {
         this.subscriptions.forEach(s => s.unsubscribe());
     }
 }

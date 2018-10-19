@@ -33,7 +33,7 @@ import { Subscription } from 'rxjs';
             -moz-border-radius: 2px;
             border-radius: 2px;
         }
-        
+
         vg-scrub-bar-current-time .slider{
             background: white;
             height: 15px;
@@ -58,24 +58,23 @@ export class VgScrubBarCurrentTime implements OnInit, OnDestroy {
         this.elem = ref.nativeElement;
     }
 
-    ngOnInit() {
+    ngOnInit(): void {
         if (this.API.isPlayerReady) {
             this.onPlayerReady();
-        }
-        else {
+        } else {
             this.subscriptions.push(this.API.playerReadyEvent.subscribe(() => this.onPlayerReady()));
         }
     }
 
-    onPlayerReady() {
+    onPlayerReady(): void {
         this.target = this.API.getMediaById(this.vgFor);
     }
 
-    getPercentage() {
+    getPercentage(): string {
         return this.target ? ((this.target.time.current * 100) / this.target.time.total) + '%' : '0%';
     }
 
-    ngOnDestroy() {
+    ngOnDestroy(): void {
         this.subscriptions.forEach(s => s.unsubscribe());
     }
 }

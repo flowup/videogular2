@@ -1,7 +1,6 @@
 import { Component, ElementRef, HostBinding, Input, OnDestroy, OnInit, ViewEncapsulation } from '@angular/core';
 import { VgAPI } from '../core/services/vg-api';
-import { IPlayable } from '../core/vg-media/i-playable';
-import { VgStates } from '../core/states/vg-states';
+import { PlayableModel } from '../core/vg-media/i-playable';
 import { Subscription } from 'rxjs';
 
 @Component({
@@ -21,7 +20,7 @@ import { Subscription } from 'rxjs';
         vg-buffering.is-buffering {
             display: block;
         }
-        
+
         .vg-buffering {
             position: absolute;
             display: block;
@@ -105,7 +104,7 @@ export class VgBuffering implements OnInit, OnDestroy {
     @Input() vgFor: string;
 
     elem: HTMLElement;
-    target: IPlayable;
+    target: PlayableModel;
     checkInterval = 50;
     currentPlayPos = 0;
     lastPlayPos = 0;
@@ -118,18 +117,17 @@ export class VgBuffering implements OnInit, OnDestroy {
         this.elem = ref.nativeElement;
     }
 
-    ngOnInit() {
+    ngOnInit(): void {
         if (this.API.isPlayerReady) {
             this.onPlayerReady();
-        }
-        else {
+        } else {
             this.subscriptions.push(
                 this.API.playerReadyEvent.subscribe(() => this.onPlayerReady())
             );
         }
     }
 
-    onPlayerReady() {
+    onPlayerReady(): void {
         this.target = this.API.getMediaById(this.vgFor);
 
         this.subscriptions.push(
@@ -139,11 +137,11 @@ export class VgBuffering implements OnInit, OnDestroy {
         );
     }
 
-    onUpdateBuffer(isBuffering) {
+    onUpdateBuffer(isBuffering: boolean): void {
         this.isBuffering = isBuffering;
     }
 
-    ngOnDestroy() {
+    ngOnDestroy(): void {
         this.subscriptions.forEach(s => s.unsubscribe());
     }
 }

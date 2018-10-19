@@ -1,13 +1,11 @@
 import {
-    Component, Input, OnInit, ElementRef, HostBinding, AfterViewInit, ViewEncapsulation,
-    EventEmitter, Output, OnDestroy
+    Component, Input, OnInit, ElementRef, HostBinding, AfterViewInit, ViewEncapsulation, OnDestroy
 } from '@angular/core';
-import { Observable ,  Subscription } from 'rxjs';
+import { Observable, Subscription, fromEvent } from 'rxjs';
 import { VgAPI } from '../core/services/vg-api';
 import { VgControlsHidden } from './../core/services/vg-controls-hidden';
 
 import { VgStates } from '../core/states/vg-states';
-import {fromEvent} from 'rxjs';
 
 @Component({
     selector: 'vg-controls',
@@ -29,7 +27,7 @@ import {fromEvent} from 'rxjs';
             transition: bottom 1s;
         }
 
-        vg-controls.hide {  
+        vg-controls.hide {
             bottom: -50px;
         }
     `]
@@ -46,18 +44,17 @@ export class VgControls implements OnInit, AfterViewInit, OnDestroy {
     @Input() vgAutohideTime = 3;
 
     private timer: any;
-    private hideTimer: any;
 
     mouseMove$: Observable<any>;
     touchStart$: Observable<any>;
 
     subscriptions: Subscription[] = [];
 
-    constructor(private API: VgAPI, private ref: ElementRef, private hidden: VgControlsHidden) {
+    constructor(private API: VgAPI, ref: ElementRef, private hidden: VgControlsHidden) {
         this.elem = ref.nativeElement;
     }
 
-    ngOnInit() {
+    ngOnInit(): void {
         this.mouseMove$ = fromEvent(this.API.videogularElement, 'mousemove');
         this.subscriptions.push(this.mouseMove$.subscribe(this.show.bind(this)));
 
@@ -66,13 +63,12 @@ export class VgControls implements OnInit, AfterViewInit, OnDestroy {
 
         if (this.API.isPlayerReady) {
             this.onPlayerReady();
-        }
-        else {
+        } else {
             this.subscriptions.push(this.API.playerReadyEvent.subscribe(() => this.onPlayerReady()));
         }
     }
 
-    onPlayerReady() {
+    onPlayerReady(): void {
         this.target = this.API.getMediaById(this.vgFor);
 
         this.subscriptions.push(this.target.subscriptions.play.subscribe(this.onPlay.bind(this)));
@@ -81,43 +77,42 @@ export class VgControls implements OnInit, AfterViewInit, OnDestroy {
         this.subscriptions.push(this.target.subscriptions.endAds.subscribe(this.onEndAds.bind(this)));
     }
 
-    ngAfterViewInit() {
+    ngAfterViewInit(): void {
         if (this.vgAutohide) {
             this.hide();
-        }
-        else {
+        } else {
             this.show();
         }
     }
 
-    onPlay() {
+    onPlay(): void {
         if (this.vgAutohide) {
             this.hide();
         }
     }
 
-    onPause() {
+    onPause(): void {
         clearTimeout(this.timer);
         this.hideControls = false;
         this.hidden.state(false);
     }
 
-    onStartAds() {
+    onStartAds(): void {
         this.isAdsPlaying = 'none';
     }
 
-    onEndAds() {
+    onEndAds(): void {
         this.isAdsPlaying = 'initial';
     }
 
-    hide() {
+    hide(): void {
         if (this.vgAutohide) {
             clearTimeout(this.timer);
             this.hideAsync();
         }
     }
 
-    show() {
+    show(): void {
         clearTimeout(this.timer);
         this.hideControls = false;
         this.hidden.state(false);
@@ -127,16 +122,16 @@ export class VgControls implements OnInit, AfterViewInit, OnDestroy {
         }
     }
 
-    private hideAsync() {
+    private hideAsync(): void {
         if (this.API.state === VgStates.VG_PLAYING) {
             this.timer = setTimeout(() => {
                 this.hideControls = true;
                 this.hidden.state(true);
-            }, this.vgAutohideTime * 1000);
+            },                      this.vgAutohideTime * 1000);
         }
     }
 
-    ngOnDestroy() {
+    ngOnDestroy(): void {
         this.subscriptions.forEach(s => s.unsubscribe());
     }
 }

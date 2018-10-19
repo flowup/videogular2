@@ -1,19 +1,18 @@
-import {VgPlaybackButton} from "./vg-playback-button";
-import {VgAPI} from "../../core/services/vg-api";
-import {ElementRef} from "@angular/core";
-import {VgStates} from "../../core/states/vg-states";
+import { VgPlaybackButton } from './vg-playback-button';
+import { VgAPI } from '../../core/services/vg-api';
+import { ElementRef } from '@angular/core';
+import { VgStates } from '../../core/states/vg-states';
 
 describe('Playback Button', () => {
-    let playbackButton:VgPlaybackButton;
-    let ref:ElementRef;
-    let api:VgAPI;
+    let playbackButton: VgPlaybackButton;
+    let ref: ElementRef;
+    let api: VgAPI;
 
     beforeEach(() => {
         ref = {
             nativeElement: {
-                getAttribute: (name) => {
-                    return name;
-                }
+                getAttribute: (name) =>
+                    name
             }
         };
 
@@ -36,7 +35,7 @@ describe('Playback Button', () => {
     });
 
     it('Should get media by id on init', () => {
-        spyOn(api, 'getMediaById').and.callFake(() => { });
+        spyOn(api, 'getMediaById').and.callFake(() => undefined);
 
         playbackButton.vgFor = 'test';
         playbackButton.onPlayerReady();
@@ -74,7 +73,7 @@ describe('Playback Button', () => {
         });
 
         it('should set playbackRate to target media', () => {
-            let media = {
+            const media = {
                 playbackRate: {
                     test: '1'
                 }

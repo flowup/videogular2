@@ -1,34 +1,33 @@
-import {VgUtils} from "./vg-utils";
+import { VgUtils } from './vg-utils';
 
 describe('Videogular Utils', () => {
     it('Should get the highest z-index', () => {
-        spyOn(window, 'getComputedStyle').and.callFake(() => {
-            return {
+        spyOn(window, 'getComputedStyle').and.callFake(() =>
+            ({
                 'z-index': 2
-            };
-        });
+            }));
 
-        let highestZ = VgUtils.getZIndex();
+        const highestZ = VgUtils.getZIndex();
 
         expect(highestZ).toBe(3);
     });
 
     it('Should get if is a mobile device', () => {
-        window.orientation = 'true';
+        (window as any).orientation = 'true';
 
-        let isMobileDevice = VgUtils.isMobileDevice();
+        const isMobileDevice = VgUtils.isMobileDevice();
 
         expect(isMobileDevice).toBeTruthy();
     });
 
     it('Should get if is an iOS device', () => {
-        let isiOS = VgUtils.isiOSDevice();
+        const isiOS = VgUtils.isiOSDevice();
 
         expect(isiOS).toBeFalsy();
     });
 
     it('Should get if is a Cordova app', () => {
-        let isCordova = VgUtils.isCordova();
+        const isCordova = VgUtils.isCordova();
 
         expect(isCordova).toBeFalsy();
     });

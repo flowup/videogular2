@@ -8,10 +8,10 @@ import {
     OnInit,
     Output,
     EventEmitter
-} from "@angular/core";
+} from '@angular/core';
 import { VgAPI } from '../../core/services/vg-api';
 import { Subscription } from 'rxjs';
-import { IDRMLicenseServer } from '../streaming';
+import { DRMLicenseServerModel } from '../streaming';
 import { BitrateOption } from '../../core/core';
 
 declare let dashjs;
@@ -20,46 +20,44 @@ declare let dashjs;
     selector: '[vgDash]',
     exportAs: 'vgDash'
 })
-export class VgDASH implements OnInit, OnChanges, OnDestroy {
-    @Input() vgDash:string;
-    @Input() vgDRMToken:string;
-    @Input() vgDRMLicenseServer:IDRMLicenseServer;
+export class VgDASHDirective implements OnInit, OnChanges, OnDestroy {
+    @Input() vgDash: string;
+    @Input() vgDRMToken: string;
+    @Input() vgDRMLicenseServer: DRMLicenseServerModel;
 
     @Output() onGetBitrates: EventEmitter<BitrateOption[]> = new EventEmitter();
 
     vgFor: string;
     target: any;
-    dash:any;
+    dash: any;
 
     subscriptions: Subscription[] = [];
 
-    constructor(private ref:ElementRef, public API:VgAPI) {}
+    constructor(private ref: ElementRef, public API: VgAPI) {}
 
-    ngOnInit() {
+    ngOnInit(): void {
         if (this.API.isPlayerReady) {
             this.onPlayerReady();
-        }
-        else {
+        } else {
             this.subscriptions.push(this.API.playerReadyEvent.subscribe(() => this.onPlayerReady()));
         }
     }
 
-    onPlayerReady() {
+    onPlayerReady(): void {
         this.vgFor = this.ref.nativeElement.getAttribute('vgFor');
         this.target = this.API.getMediaById(this.vgFor);
         this.createPlayer();
     }
 
-    ngOnChanges(changes:SimpleChanges) {
+    ngOnChanges(changes: SimpleChanges): void {
         if (changes['vgDash'] && changes['vgDash'].currentValue) {
             this.createPlayer();
-        }
-        else {
+        } else {
             this.destroyPlayer();
         }
     }
 
-    createPlayer() {
+    createPlayer(): void {
         if (this.dash) {
             this.destroyPlayer();
         }
@@ -75,7 +73,7 @@ export class VgDASH implements OnInit, OnChanges, OnDestroy {
                 drmOptions = this.vgDRMLicenseServer;
 
                 if (this.vgDRMToken) {
-                    for (let drmServer of Object.keys(drmOptions)) {
+                    for (const drmServer of Object.keys(drmOptions)) {
                         drmOptions[drmServer].httpRequestHeaders = { Authorization: this.vgDRMToken };
                     }
                 }
@@ -124,8 +122,7 @@ export class VgDASH implements OnInit, OnChanges, OnDestroy {
             }
 
             this.dash.attachSource(this.vgDash);
-        }
-        else {
+        } else {
             if (this.target) {
                 this.target.pause();
                 this.target.seekTime(0);
@@ -134,7 +131,7 @@ export class VgDASH implements OnInit, OnChanges, OnDestroy {
         }
     }
 
-    setBitrate(bitrate: BitrateOption) {
+    setBitrate(bitrate: BitrateOption): void {
         if (this.dash) {
             if (bitrate.qualityIndex > 0) {
                 if (this.dash.getAutoSwitchQualityFor(bitrate.mediaType)) {
@@ -149,14 +146,14 @@ export class VgDASH implements OnInit, OnChanges, OnDestroy {
         }
     }
 
-    destroyPlayer() {
+    destroyPlayer(): void {
         if (this.dash) {
             this.dash.reset();
             this.dash = null;
         }
     }
 
-    ngOnDestroy() {
+    ngOnDestroy(): void {
         this.subscriptions.forEach(s => s.unsubscribe());
         this.destroyPlayer();
     }

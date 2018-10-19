@@ -1,20 +1,19 @@
-import {VgFullscreen} from "./vg-fullscreen";
-import {VgAPI} from "../../core/services/vg-api";
-import {ElementRef} from "@angular/core";
-import {VgFullscreenAPI} from "../../core/services/vg-fullscreen-api";
+import { VgFullscreen } from './vg-fullscreen';
+import { VgAPI } from '../../core/services/vg-api';
+import { ElementRef } from '@angular/core';
+import { VgFullscreenAPI } from '../../core/services/vg-fullscreen-api';
 
 describe('Videogular Player', () => {
     let fullscreen: VgFullscreen;
-    let ref:ElementRef;
-    let api:VgAPI;
-    let fsAPI:VgFullscreenAPI;
+    let ref: ElementRef;
+    let api: VgAPI;
+    let fsAPI: VgFullscreenAPI;
 
     beforeEach(() => {
         ref = {
             nativeElement: {
-                getAttribute: (name) => {
-                    return name;
-                }
+                getAttribute: (name) =>
+                    name
             }
         };
 
@@ -24,7 +23,7 @@ describe('Videogular Player', () => {
     });
 
     it('Should get media by id on init', () => {
-        spyOn(api, 'getMediaById').and.callFake(() => { });
+        spyOn(api, 'getMediaById').and.callFake(() => undefined);
 
         fullscreen.vgFor = 'test';
         fullscreen.onPlayerReady();

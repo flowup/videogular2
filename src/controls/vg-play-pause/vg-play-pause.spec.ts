@@ -1,19 +1,18 @@
-import {VgPlayPause} from "./vg-play-pause";
-import {VgAPI} from "../../core/services/vg-api";
-import {ElementRef} from "@angular/core";
-import {VgStates} from "../../core/states/vg-states";
+import { VgPlayPause } from './vg-play-pause';
+import { VgAPI } from '../../core/services/vg-api';
+import { ElementRef } from '@angular/core';
+import { VgStates } from '../../core/states/vg-states';
 
 describe('Play/Pause Button', () => {
-    let playPause:VgPlayPause;
-    let ref:ElementRef;
-    let api:VgAPI;
+    let playPause: VgPlayPause;
+    let ref: ElementRef;
+    let api: VgAPI;
 
     beforeEach(() => {
         ref = {
             nativeElement: {
-                getAttribute: (name) => {
-                    return name;
-                }
+                getAttribute: (name) =>
+                    name
             }
         };
 
@@ -32,11 +31,10 @@ describe('Play/Pause Button', () => {
     });
 
     it('Should get media by id on init', () => {
-        spyOn(api, 'getMediaById').and.callFake(() => {
-            return {
+        spyOn(api, 'getMediaById').and.callFake(() =>
+            ({
                 volume: 1
-            };
-        });
+            }));
 
         playPause.vgFor = 'test';
         playPause.onPlayerReady();
@@ -53,14 +51,14 @@ describe('Play/Pause Button', () => {
 
         playPause.target = api;
 
-        let state = playPause.getState();
+        const state = playPause.getState();
 
         expect(state).toBe(VgStates.VG_PLAYING);
     });
 
     describe('onClick (single and multiple media)', () => {
         it('should pause if current state is different play', () => {
-            spyOn(api, 'pause').and.callFake(() => {});
+            spyOn(api, 'pause').and.callFake(() => undefined);
 
             api.medias = {
                 main: {
@@ -76,7 +74,7 @@ describe('Play/Pause Button', () => {
         });
 
         it('should play if current state is pause', () => {
-            spyOn(api, 'play').and.callFake(() => {});
+            spyOn(api, 'play').and.callFake(() => undefined);
 
             api.medias = {
                 main: {
@@ -92,7 +90,7 @@ describe('Play/Pause Button', () => {
         });
 
         it('should play if current state is ended', () => {
-            spyOn(api, 'play').and.callFake(() => {});
+            spyOn(api, 'play').and.callFake(() => undefined);
 
             api.medias = {
                 main: {

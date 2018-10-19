@@ -1,7 +1,7 @@
 import { NgModule, Provider } from '@angular/core';
 import { VgPlayer } from './vg-player/vg-player';
-import { VgMedia } from './vg-media/vg-media';
-import { VgCuePoints } from './vg-cue-points/vg-cue-points';
+import { VgMediaDirective } from './vg-media/vg-media';
+import { VgCuePointsDirective } from './vg-cue-points/vg-cue-points';
 import { VgAPI } from './services/vg-api';
 import { VgFullscreenAPI } from './services/vg-fullscreen-api';
 import { VgUtils } from './services/vg-utils';
@@ -26,9 +26,6 @@ export * from './states/vg-states';
 // interfaces
 export * from './vg-media/i-media-element';
 
-// utility classes
-export * from './vg-media/vg-media-element';
-
 export interface BitrateOption {
     qualityIndex: number;
     width: number;
@@ -41,9 +38,9 @@ export interface BitrateOption {
 /**
  * @internal
  */
-export function coreDirectives() {
+export function coreDirectives(): any[] {
     return [
-        VgPlayer, VgMedia, VgCuePoints
+        VgPlayer, VgMediaDirective, VgCuePointsDirective
     ];
 }
 

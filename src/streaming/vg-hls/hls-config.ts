@@ -1,4 +1,4 @@
-export interface IHLSConfig {
+export interface HLSConfigModel {
     abrController: Function;
     defaultAudioCodec: string;
     fLoader: Function;

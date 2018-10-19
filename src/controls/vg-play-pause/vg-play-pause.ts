@@ -51,26 +51,25 @@ export class VgPlayPause implements OnInit, OnDestroy {
         this.elem = ref.nativeElement;
     }
 
-    ngOnInit() {
+    ngOnInit(): void {
         if (this.API.isPlayerReady) {
             this.onPlayerReady();
-        }
-        else {
+        } else {
             this.subscriptions.push(this.API.playerReadyEvent.subscribe(() => this.onPlayerReady()));
         }
     }
 
-    onPlayerReady() {
+    onPlayerReady(): void {
         this.target = this.API.getMediaById(this.vgFor);
     }
 
     @HostListener('click')
-    onClick() {
+    onClick(): void {
         this.playPause();
     }
 
     @HostListener('keydown', ['$event'])
-    onKeyDown(event: KeyboardEvent) {
+    onKeyDown(event: KeyboardEvent): void {
         // On press Enter (13) or Space (32)
         if (event.keyCode === 13 || event.keyCode === 32) {
             event.preventDefault();
@@ -78,8 +77,8 @@ export class VgPlayPause implements OnInit, OnDestroy {
         }
     }
 
-    playPause() {
-        let state = this.getState();
+    playPause(): void {
+        const state = this.getState();
 
         switch (state) {
             case VgStates.VG_PLAYING:
@@ -93,12 +92,12 @@ export class VgPlayPause implements OnInit, OnDestroy {
         }
     }
 
-    getState() {
+    getState(): string {
         this.ariaValue = this.target ? this.target.state : VgStates.VG_PAUSED;
         return this.ariaValue;
     }
 
-    ngOnDestroy() {
+    ngOnDestroy(): void {
         this.subscriptions.forEach(s => s.unsubscribe());
     }
 }

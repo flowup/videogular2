@@ -11,7 +11,7 @@ export class VgControlsHidden {
         this.isHidden = this.isHiddenSubject.asObservable();
     }
 
-    state(hidden: boolean) {
+    state(hidden: boolean): void {
         this.isHiddenSubject.next(hidden);
     }
 }

@@ -49,7 +49,7 @@ export class VgScrubBarCuePoints implements OnInit, OnChanges, OnDestroy, DoChec
     elem: HTMLElement;
     target: any;
     onLoadedMetadataCalled = false;
-    cuePoints: Array<any> = [];
+    cuePoints: any[] = [];
 
     subscriptions: Subscription[] = [];
 
@@ -59,19 +59,18 @@ export class VgScrubBarCuePoints implements OnInit, OnChanges, OnDestroy, DoChec
         this.elem = ref.nativeElement;
     }
 
-    ngOnInit() {
+    ngOnInit(): void {
         if (this.API.isPlayerReady) {
             this.onPlayerReady();
-        }
-        else {
+        } else {
             this.subscriptions.push(this.API.playerReadyEvent.subscribe(() => this.onPlayerReady()));
         }
     }
 
-    onPlayerReady() {
+    onPlayerReady(): void {
         this.target = this.API.getMediaById(this.vgFor);
 
-        let onTimeUpdate = this.target.subscriptions.loadedMetadata;
+        const onTimeUpdate = this.target.subscriptions.loadedMetadata;
         this.subscriptions.push(onTimeUpdate.subscribe(this.onLoadedMetadata.bind(this)));
 
         if (this.onLoadedMetadataCalled) {
@@ -79,21 +78,21 @@ export class VgScrubBarCuePoints implements OnInit, OnChanges, OnDestroy, DoChec
         }
     }
 
-    onLoadedMetadata() {
+    onLoadedMetadata(): void {
         if (this.vgCuePoints) {
             // We need to transform the TextTrackCueList to Array or it doesn't work on IE11/Edge.
             // See: https://github.com/videogular/videogular2/issues/369
             this.cuePoints = [];
 
             for (let i = 0, l = this.vgCuePoints.length; i < l; i++) {
-                let end = (this.vgCuePoints[ i ].endTime >= 0) ? this.vgCuePoints[ i ].endTime : this.vgCuePoints[ i ].startTime + 1;
-                let cuePointDuration = (end - this.vgCuePoints[ i ].startTime) * 1000;
+                const end = (this.vgCuePoints[ i ].endTime >= 0) ? this.vgCuePoints[ i ].endTime : this.vgCuePoints[ i ].startTime + 1;
+                const cuePointDuration = (end - this.vgCuePoints[ i ].startTime) * 1000;
                 let position = '0';
                 let percentWidth = '0';
 
                 if (typeof cuePointDuration === 'number' && this.target.time.total) {
-                    percentWidth = ((cuePointDuration * 100) / this.target.time.total) + "%";
-                    position = (this.vgCuePoints[ i ].startTime * 100 / (Math.round(this.target.time.total / 1000))) + "%";
+                    percentWidth = ((cuePointDuration * 100) / this.target.time.total) + '%';
+                    position = (this.vgCuePoints[ i ].startTime * 100 / (Math.round(this.target.time.total / 1000))) + '%';
                 }
 
                 (<any>this.vgCuePoints[ i ]).$$style = {
@@ -106,7 +105,7 @@ export class VgScrubBarCuePoints implements OnInit, OnChanges, OnDestroy, DoChec
         }
     }
 
-    updateCuePoints() {
+    updateCuePoints(): void {
         if (!this.target) {
             this.onLoadedMetadataCalled = true;
             return;
@@ -114,13 +113,13 @@ export class VgScrubBarCuePoints implements OnInit, OnChanges, OnDestroy, DoChec
         this.onLoadedMetadata();
     }
 
-    ngOnChanges(changes: { [propName: string]: SimpleChange }) {
+    ngOnChanges(changes: { [propName: string]: SimpleChange }): void {
         if (changes[ 'vgCuePoints' ].currentValue) {
             this.updateCuePoints();
         }
     }
 
-    ngDoCheck() {
+    ngDoCheck(): void {
         if (this.vgCuePoints) {
             const changes = this.totalCues !== this.vgCuePoints.length;
 
@@ -131,7 +130,7 @@ export class VgScrubBarCuePoints implements OnInit, OnChanges, OnDestroy, DoChec
         }
     }
 
-    ngOnDestroy() {
+    ngOnDestroy(): void {
         this.subscriptions.forEach(s => s.unsubscribe());
     }
 }

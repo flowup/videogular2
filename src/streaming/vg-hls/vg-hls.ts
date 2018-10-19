@@ -8,9 +8,9 @@ import {
     OnInit,
     Output,
     EventEmitter
-} from "@angular/core";
-import { VgAPI } from "../../core/services/vg-api";
-import { IHLSConfig } from './hls-config';
+} from '@angular/core';
+import { VgAPI } from '../../core/services/vg-api';
+import { HLSConfigModel } from './hls-config';
 import { Subscription } from 'rxjs';
 import { BitrateOption } from '../../core/core';
 
@@ -20,8 +20,8 @@ declare let Hls;
     selector: '[vgHls]',
     exportAs: 'vgHls'
 })
-export class VgHLS implements OnInit, OnChanges, OnDestroy {
-    @Input() vgHls:string;
+export class VgHLSDirective implements OnInit, OnChanges, OnDestroy {
+    @Input() vgHls: string;
 
     @Output() onGetBitrates: EventEmitter<BitrateOption[]> = new EventEmitter();
 
@@ -30,33 +30,32 @@ export class VgHLS implements OnInit, OnChanges, OnDestroy {
     hls: any;
     preload: boolean;
     crossorigin: string;
-    config: IHLSConfig;
+    config: HLSConfigModel;
 
     subscriptions: Subscription[] = [];
 
-    constructor(private ref:ElementRef, public API:VgAPI) {}
+    constructor(private ref: ElementRef, public API: VgAPI) {}
 
-    ngOnInit() {
+    ngOnInit(): void {
         if (this.API.isPlayerReady) {
             this.onPlayerReady();
-        }
-        else {
+        } else {
             this.subscriptions.push(this.API.playerReadyEvent.subscribe(() => this.onPlayerReady()));
         }
     }
 
-    onPlayerReady() {
+    onPlayerReady(): void {
         this.crossorigin = this.ref.nativeElement.getAttribute('crossorigin');
         this.preload = this.ref.nativeElement.getAttribute('preload') !== 'none';
         this.vgFor = this.ref.nativeElement.getAttribute('vgFor');
         this.target = this.API.getMediaById(this.vgFor);
 
-        this.config = <IHLSConfig>{
+        this.config = <HLSConfigModel>{
             autoStartLoad: this.preload
         };
 
         if (this.crossorigin === 'use-credentials') {
-            this.config.xhrSetup = (xhr, url) => {
+            this.config.xhrSetup = (xhr) => {
                 // Send cookies
                 xhr.withCredentials = true;
             };
@@ -77,28 +76,27 @@ export class VgHLS implements OnInit, OnChanges, OnDestroy {
         }
     }
 
-    ngOnChanges(changes:SimpleChanges) {
+    ngOnChanges(changes: SimpleChanges): void {
         if (changes['vgHls'] && changes['vgHls'].currentValue) {
             this.createPlayer();
-        }
-        else {
+        } else {
             this.destroyPlayer();
         }
     }
 
-    createPlayer() {
+    createPlayer(): void {
         if (this.hls) {
             this.destroyPlayer();
         }
 
         // It's a HLS source
         if (this.vgHls && this.vgHls.indexOf('m3u8') > -1 && Hls.isSupported()) {
-            let video:HTMLVideoElement = this.ref.nativeElement;
+            const video: HTMLVideoElement = this.ref.nativeElement;
 
             this.hls = new Hls(this.config);
             this.hls.on(
                 Hls.Events.MANIFEST_PARSED,
-                (event, data) => {
+                (_, data) => {
                     const videoList = [];
 
                     videoList.push({
@@ -126,8 +124,7 @@ export class VgHLS implements OnInit, OnChanges, OnDestroy {
             );
             this.hls.loadSource(this.vgHls);
             this.hls.attachMedia(video);
-        }
-        else {
+        } else {
             if (this.target && !!this.target.pause) {
                 this.target.pause();
                 this.target.seekTime(0);
@@ -136,20 +133,20 @@ export class VgHLS implements OnInit, OnChanges, OnDestroy {
         }
     }
 
-    setBitrate(bitrate: BitrateOption) {
+    setBitrate(bitrate: BitrateOption): void {
         if (this.hls) {
             this.hls.nextLevel = bitrate.qualityIndex - 1;
         }
     }
 
-    destroyPlayer() {
+    destroyPlayer(): void {
         if (this.hls) {
             this.hls.destroy();
             this.hls = null;
         }
     }
 
-    ngOnDestroy() {
+    ngOnDestroy(): void {
         this.subscriptions.forEach(s => s.unsubscribe());
         this.destroyPlayer();
     }

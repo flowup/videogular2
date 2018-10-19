@@ -1,7 +1,7 @@
-import { NgModule }      from '@angular/core';
+import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 
-import {VgImaAds} from './vg-ima-ads';
+import { VgImaAds } from './vg-ima-ads';
 
 @NgModule({
     imports: [ CommonModule ],

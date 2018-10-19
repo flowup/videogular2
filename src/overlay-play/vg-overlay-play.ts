@@ -81,16 +81,15 @@ export class VgOverlayPlay implements OnInit, OnDestroy {
         this.elem = ref.nativeElement;
     }
 
-    ngOnInit() {
+    ngOnInit(): void {
         if (this.API.isPlayerReady) {
             this.onPlayerReady();
-        }
-        else {
+        } else {
             this.subscriptions.push(this.API.playerReadyEvent.subscribe(() => this.onPlayerReady()));
         }
     }
 
-    onPlayerReady() {
+    onPlayerReady(): void {
         this.target = this.API.getMediaById(this.vgFor);
         this.subscriptions.push(this.fsAPI.onChangeFullscreen.subscribe(this.onChangeFullscreen.bind(this)));
         this.subscriptions.push(this.controlsHidden.isHidden.subscribe(this.onHideControls.bind(this)));
@@ -101,23 +100,23 @@ export class VgOverlayPlay implements OnInit, OnDestroy {
         );
     }
 
-    onUpdateBuffer(isBuffering) {
+    onUpdateBuffer(isBuffering: boolean): void {
         this.isBuffering = isBuffering;
     }
 
-    onChangeFullscreen(fsState: boolean) {
+    onChangeFullscreen(fsState: boolean): void {
         if (this.fsAPI.nativeFullscreen) {
             this.isNativeFullscreen = fsState;
         }
     }
 
-    onHideControls(hidden: boolean) {
+    onHideControls(hidden: boolean): void {
         this.areControlsHidden = hidden;
     }
 
     @HostListener('click')
-    onClick() {
-        let state = this.getState();
+    onClick(): void {
+        const state = this.getState();
 
         switch (state) {
             case VgStates.VG_PLAYING:
@@ -131,7 +130,7 @@ export class VgOverlayPlay implements OnInit, OnDestroy {
         }
     }
 
-    getState() {
+    getState(): string {
         let state = VgStates.VG_PAUSED;
 
         if (this.target) {
@@ -142,8 +141,7 @@ export class VgOverlayPlay implements OnInit, OnDestroy {
                         break;
                     }
                 }
-            }
-            else {
+            } else {
                 state = this.target.state;
             }
         }
@@ -151,7 +149,7 @@ export class VgOverlayPlay implements OnInit, OnDestroy {
         return state;
     }
 
-    ngOnDestroy() {
+    ngOnDestroy(): void {
         this.subscriptions.forEach(s => s.unsubscribe());
     }
 }

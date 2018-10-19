@@ -1,14 +1,20 @@
 {
     "compilerOptions": {
-        "noImplicitAny": false,
-        "module": "commonjs",
-        "target": "es5",
+        "sourceMap": true,
+        "removeComments": true,
+        "declaration": false,
+        "moduleResolution": "node",
         "emitDecoratorMetadata": true,
         "experimentalDecorators": true,
-        "inlineSourceMap": true,
-        "inlineSources": true,
-        "declaration": true,
-        "moduleResolution": "node"
+        "forceConsistentCasingInFileNames": true,
+        "newLine": "LF",
+        "noImplicitReturns": true,
+        "noUnusedLocals": true,
+        "noUnusedParameters": true,
+        "target": "es5",
+        // TODO: Enable this two rules from our TSConfig
+        "noImplicitAny": false,
+        "strictNullChecks": false
     },
     "exclude": [
         "docs/*",

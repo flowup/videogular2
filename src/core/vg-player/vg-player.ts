@@ -11,7 +11,7 @@ import {
 import { VgAPI } from '../services/vg-api';
 import { VgFullscreenAPI } from '../services/vg-fullscreen-api';
 import { VgUtils } from '../services/vg-utils';
-import { VgMedia } from '../vg-media/vg-media';
+import { VgMediaDirective } from '../vg-media/vg-media';
 import { Subscription } from 'rxjs';
 import { VgControlsHidden } from '../services/vg-controls-hidden';
 
@@ -56,8 +56,8 @@ export class VgPlayer implements AfterContentInit, OnDestroy {
     @Output()
     onMediaReady: EventEmitter<any> = new EventEmitter();
 
-    @ContentChildren(VgMedia)
-    medias: QueryList<VgMedia>;
+    @ContentChildren(VgMediaDirective)
+    medias: QueryList<VgMediaDirective>;
 
     subscriptions: Subscription[] = [];
 
@@ -67,7 +67,7 @@ export class VgPlayer implements AfterContentInit, OnDestroy {
         this.api.registerElement(this.elem);
     }
 
-    ngAfterContentInit() {
+    ngAfterContentInit(): void {
         this.medias.toArray().forEach((media) => {
             this.api.registerMedia(media);
         });
@@ -81,7 +81,7 @@ export class VgPlayer implements AfterContentInit, OnDestroy {
         this.onPlayerReady.emit(this.api);
     }
 
-    onChangeFullscreen(fsState: boolean) {
+    onChangeFullscreen(fsState: boolean): void {
         if (!this.fsAPI.nativeFullscreen) {
             this.isFullscreen = fsState;
             this.zIndex = fsState ? VgUtils.getZIndex().toString() : 'auto';
@@ -90,11 +90,11 @@ export class VgPlayer implements AfterContentInit, OnDestroy {
         }
     }
 
-    onHideControls(hidden: boolean) {
+    onHideControls(hidden: boolean): void {
         this.areControlsHidden = hidden;
     }
 
-    ngOnDestroy() {
+    ngOnDestroy(): void {
         this.subscriptions.forEach(s => s.unsubscribe());
     }
 }

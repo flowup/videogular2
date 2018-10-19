@@ -43,27 +43,25 @@ export class VgScrubBarBufferingTime implements OnInit, OnDestroy {
         this.elem = ref.nativeElement;
     }
 
-    ngOnInit() {
+    ngOnInit(): void {
         if (this.API.isPlayerReady) {
             this.onPlayerReady();
-        }
-        else {
+        } else {
             this.subscriptions.push(this.API.playerReadyEvent.subscribe(() => this.onPlayerReady()));
         }
     }
 
-    onPlayerReady() {
+    onPlayerReady(): void {
         this.target = this.API.getMediaById(this.vgFor);
     }
 
-    getBufferTime() {
-        let bufferTime = "0%";
+    getBufferTime(): string {
+        let bufferTime = '0%';
 
         if (this.target && this.target.buffer && this.target.buffered.length) {
             if (this.target.time.total === 0) {
                 bufferTime = '0%';
-            }
-            else {
+            } else {
                 bufferTime = ((this.target.buffer.end / this.target.time.total) * 100) + '%';
             }
         }
@@ -71,7 +69,7 @@ export class VgScrubBarBufferingTime implements OnInit, OnDestroy {
         return bufferTime;
     }
 
-    ngOnDestroy() {
+    ngOnDestroy(): void {
         this.subscriptions.forEach(s => s.unsubscribe());
     }
 }

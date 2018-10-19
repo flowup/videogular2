@@ -5,7 +5,7 @@ import { Observable ,  Subscription, fromEvent } from 'rxjs';
 @Directive({
     selector: '[vgCuePoints]'
 })
-export class VgCuePoints implements OnInit, OnDestroy, DoCheck {
+export class VgCuePointsDirective implements OnInit, OnDestroy, DoCheck {
     @Output('onEnterCuePoint') onEnterCuePoint: EventEmitter<any> = new EventEmitter();
     @Output('onUpdateCuePoint') onUpdateCuePoint: EventEmitter<any> = new EventEmitter();
     @Output('onExitCuePoint') onExitCuePoint: EventEmitter<any> = new EventEmitter();
@@ -23,20 +23,20 @@ export class VgCuePoints implements OnInit, OnDestroy, DoCheck {
     constructor(public ref: ElementRef) {
     }
 
-    ngOnInit() {
+    ngOnInit(): void {
         this.onLoad$ = fromEvent(this.ref.nativeElement, VgEvents.VG_LOAD);
         this.subscriptions.push(this.onLoad$.subscribe(this.onLoad.bind(this)));
     }
 
-    onLoad(event: any) {
-        let cues: TextTrackCue[] = event.target.track.cues;
+    onLoad(event: any): void {
+        const cues: TextTrackCue[] = event.target.track.cues;
 
         this.ref.nativeElement.cues = cues;
 
         this.updateCuePoints(cues);
     }
 
-    updateCuePoints(cues: TextTrackCue[]) {
+    updateCuePoints(cues: TextTrackCue[]): void {
         this.cuesSubscriptions.forEach(s => s.unsubscribe());
 
         for (let i = 0, l = cues.length; i < l; i++) {
@@ -48,15 +48,15 @@ export class VgCuePoints implements OnInit, OnDestroy, DoCheck {
         }
     }
 
-    onEnter(event: any) {
+    onEnter(event: any): void {
         this.onEnterCuePoint.emit(event.target);
     }
 
-    onExit(event: any) {
+    onExit(event: any): void {
         this.onExitCuePoint.emit(event.target);
     }
 
-    ngDoCheck() {
+    ngDoCheck(): void {
         if (this.ref.nativeElement.cues) {
             const changes = this.totalCues !== this.ref.nativeElement.track.cues.length;
 
@@ -68,7 +68,7 @@ export class VgCuePoints implements OnInit, OnDestroy, DoCheck {
         }
     }
 
-    ngOnDestroy() {
+    ngOnDestroy(): void {
         this.subscriptions.forEach(s => s.unsubscribe());
     }
 }

@@ -2,7 +2,6 @@ import { Component, Input, ElementRef, HostListener, OnInit, ViewEncapsulation, 
 import { VgAPI } from '../../core/services/vg-api';
 import { Subscription } from 'rxjs';
 
-
 @Component({
     selector: 'vg-mute',
     encapsulation: ViewEncapsulation.None,
@@ -54,27 +53,26 @@ export class VgMute implements OnInit, OnDestroy {
         this.elem = ref.nativeElement;
     }
 
-    ngOnInit() {
+    ngOnInit(): void {
         if (this.API.isPlayerReady) {
             this.onPlayerReady();
-        }
-        else {
+        } else {
             this.subscriptions.push(this.API.playerReadyEvent.subscribe(() => this.onPlayerReady()));
         }
     }
 
-    onPlayerReady() {
+    onPlayerReady(): void {
         this.target = this.API.getMediaById(this.vgFor);
         this.currentVolume = this.target.volume;
     }
 
     @HostListener('click')
-    onClick() {
+    onClick(): void {
         this.changeMuteState();
     }
 
     @HostListener('keydown', ['$event'])
-    onKeyDown(event: KeyboardEvent) {
+    onKeyDown(event: KeyboardEvent): void {
         // On press Enter (13) or Space (32)
         if (event.keyCode === 13 || event.keyCode === 32) {
             event.preventDefault();
@@ -82,8 +80,8 @@ export class VgMute implements OnInit, OnDestroy {
         }
     }
 
-    changeMuteState() {
-        let volume = this.getVolume();
+    changeMuteState(): void {
+        const volume = this.getVolume();
 
         if (volume === 0) {
             if (this.target.volume === 0 && this.currentVolume === 0) {
@@ -91,20 +89,19 @@ export class VgMute implements OnInit, OnDestroy {
             }
 
             this.target.volume = this.currentVolume;
-        }
-        else {
+        } else {
             this.currentVolume = volume;
             this.target.volume = 0;
         }
     }
 
-    getVolume() {
+    getVolume(): number {
         const volume = this.target ? this.target.volume : 0;
         this.ariaValue = volume ? 'unmuted' : 'muted';
         return volume;
     }
 
-    ngOnDestroy() {
+    ngOnDestroy(): void {
         this.subscriptions.forEach(s => s.unsubscribe());
     }
 }

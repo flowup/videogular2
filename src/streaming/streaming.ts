@@ -1,21 +1,21 @@
-import { NgModule }      from '@angular/core';
+import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { VgDASH } from "./vg-dash/vg-dash";
-import { VgHLS } from "./vg-hls/vg-hls";
+import { VgDASHDirective } from './vg-dash/vg-dash';
+import { VgHLSDirective } from './vg-hls/vg-hls';
 
-export interface IDRMLicenseServer {
+export interface DRMLicenseServerModel {
     [index: string]: {
         serverURL: string;
-    }
+    };
 }
 
 @NgModule({
     imports: [ CommonModule ],
     declarations: [
-        VgDASH, VgHLS
+        VgDASHDirective, VgHLSDirective
     ],
     exports: [
-        VgDASH, VgHLS
+        VgDASHDirective, VgHLSDirective
     ]
 })
 export class VgStreamingModule {}

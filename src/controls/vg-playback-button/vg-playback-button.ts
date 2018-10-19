@@ -44,7 +44,7 @@ export class VgPlaybackButton implements OnInit, OnDestroy {
     elem: HTMLElement;
     target: any;
 
-    @Input() playbackValues: Array<string>;
+    @Input() playbackValues: string[];
     playbackIndex: number;
 
     subscriptions: Subscription[] = [];
@@ -57,26 +57,25 @@ export class VgPlaybackButton implements OnInit, OnDestroy {
         this.playbackIndex = 1;
     }
 
-    ngOnInit() {
+    ngOnInit(): void {
         if (this.API.isPlayerReady) {
             this.onPlayerReady();
-        }
-        else {
+        } else {
             this.subscriptions.push(this.API.playerReadyEvent.subscribe(() => this.onPlayerReady()));
         }
     }
 
-    onPlayerReady() {
+    onPlayerReady(): void {
         this.target = this.API.getMediaById(this.vgFor);
     }
 
     @HostListener('click')
-    onClick() {
+    onClick(): void {
         this.updatePlaybackSpeed();
     }
 
     @HostListener('keydown', ['$event'])
-    onKeyDown(event: KeyboardEvent) {
+    onKeyDown(event: KeyboardEvent): void {
         // On press Enter (13) or Space (32)
         if (event.keyCode === 13 || event.keyCode === 32) {
             event.preventDefault();
@@ -84,23 +83,22 @@ export class VgPlaybackButton implements OnInit, OnDestroy {
         }
     }
 
-    updatePlaybackSpeed() {
+    updatePlaybackSpeed(): void {
         this.playbackIndex = ++this.playbackIndex % this.playbackValues.length;
 
         if (this.target instanceof VgAPI) {
             this.target.playbackRate = (this.playbackValues[ this.playbackIndex ]);
-        }
-        else {
+        } else {
             this.target.playbackRate[ this.vgFor ] = (this.playbackValues[ this.playbackIndex ]);
         }
     }
 
-    getPlaybackRate() {
-        this.ariaValue = this.target ? this.target.playbackRate : 1.0;
+    getPlaybackRate(): number {
+        this.ariaValue = this.target ? this.target.playbackRate : 1;
         return this.ariaValue;
     }
 
-    ngOnDestroy() {
+    ngOnDestroy(): void {
         this.subscriptions.forEach(s => s.unsubscribe());
     }
 }

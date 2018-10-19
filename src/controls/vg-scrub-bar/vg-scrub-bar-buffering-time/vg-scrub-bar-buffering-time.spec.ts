@@ -1,18 +1,17 @@
-import {VgScrubBarBufferingTime} from "./vg-scrub-bar-buffering-time";
-import {VgAPI} from "../../../core/services/vg-api";
-import {ElementRef} from "@angular/core";
+import { VgScrubBarBufferingTime } from './vg-scrub-bar-buffering-time';
+import { VgAPI } from '../../../core/services/vg-api';
+import { ElementRef } from '@angular/core';
 
 describe('Scrub bar buffering time', () => {
     let scrubBarBufferingTime: VgScrubBarBufferingTime;
-    let ref:ElementRef;
-    let api:VgAPI;
+    let ref: ElementRef;
+    let api: VgAPI;
 
     beforeEach(() => {
         ref = {
             nativeElement: {
-                getAttribute: (name) => {
-                    return name;
-                }
+                getAttribute: (name) =>
+                    name
             }
         };
 
@@ -42,7 +41,7 @@ describe('Scrub bar buffering time', () => {
                 buffered: [1]
             };
 
-            let percent = scrubBarBufferingTime.getBufferTime();
+            const percent = scrubBarBufferingTime.getBufferTime();
 
             expect(percent).toEqual('50%');
         });
@@ -58,7 +57,7 @@ describe('Scrub bar buffering time', () => {
                 buffered: [1]
             };
 
-            let percent = scrubBarBufferingTime.getBufferTime();
+            const percent = scrubBarBufferingTime.getBufferTime();
 
             expect(percent).toEqual('25%');
         });
@@ -68,7 +67,7 @@ describe('Scrub bar buffering time', () => {
                 buffer: null
             };
 
-            let percent = scrubBarBufferingTime.getBufferTime();
+            const percent = scrubBarBufferingTime.getBufferTime();
 
             expect(percent).toEqual('0%');
         });

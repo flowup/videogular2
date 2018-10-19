@@ -1,30 +1,29 @@
 import { OffsetModel } from './offset.model';
-import { ChangeDetectorRef, ElementRef, OnInit, Directive, Input, OnDestroy } from "@angular/core";
-import { IPlayable, IMediaSubscriptions } from "./i-playable";
-import { Observable ,  Subscription ,  Observer ,  Subject, fromEvent } from "rxjs";
+import { ChangeDetectorRef, OnInit, Directive, Input, OnDestroy } from '@angular/core';
+import { PlayableModel, MediaSubscriptionsModel } from './i-playable';
+import { Observable, Subscription, Subject, fromEvent, timer, combineLatest } from 'rxjs';
 
 import { VgStates } from '../states/vg-states';
 import { VgAPI } from '../services/vg-api';
 import { VgEvents } from '../events/vg-events';
-import { IMediaElement } from './i-media-element';
-import {timer, combineLatest} from 'rxjs';
+import { MediaElementModel } from './i-media-element';
 
 const msFloatSub = 0.3;
 
 @Directive({
     selector: '[vgMedia]'
 })
-export class VgMedia implements OnInit, OnDestroy, IPlayable {
+export class VgMediaDirective implements OnInit, OnDestroy, PlayableModel {
     elem: any;
 
-    @Input() vgMedia: IMediaElement;
+    @Input() vgMedia: MediaElementModel;
     @Input() vgMaster: boolean;
     @Input() set vgOffset(offset: OffsetModel) {
         if (this.vgMedia.duration < offset.end) {
             offset.end = this.vgMedia.duration;
         }
         if (offset.start < 0) {
-            offset.start = 0
+            offset.start = 0;
         }
 
         this.offset = offset;
@@ -38,10 +37,10 @@ export class VgMedia implements OnInit, OnDestroy, IPlayable {
         setTimeout(() => {
             if (offset.jumpToStart) {
                 this.seekTime(offset.start);
-            } else if(offset.jumpToEnd) {
+            } else if (offset.jumpToEnd) {
                 this.seekTime(offset.end);
             }
-        }, 0);
+        },         0);
     }
 
     offset: OffsetModel;
@@ -52,7 +51,7 @@ export class VgMedia implements OnInit, OnDestroy, IPlayable {
     time: any = { current: 0, total: 0, left: 0 };
     buffer: any = { end: 0 };
     track: any;
-    subscriptions: IMediaSubscriptions | any;
+    subscriptions: MediaSubscriptionsModel | any;
 
     canPlay = false;
     canPlayThrough = false;
@@ -94,7 +93,7 @@ export class VgMedia implements OnInit, OnDestroy, IPlayable {
 
     }
 
-    ngOnInit() {
+    ngOnInit(): void {
         this.coreSrc = this.vgMedia.src;
         if (this.vgMedia.nodeName) {
             // It's a native element
@@ -141,7 +140,7 @@ export class VgMedia implements OnInit, OnDestroy, IPlayable {
             mutation: Observable.create(
                 (observer: any) => {
 
-                    let domObs = new MutationObserver((mutations) => {
+                    const domObs = new MutationObserver((mutations) => {
                         observer.next(mutations);
                     });
 
@@ -180,18 +179,19 @@ export class VgMedia implements OnInit, OnDestroy, IPlayable {
         }
     }
 
-    prepareSync() {
-        let canPlayAll: Array<Observable<any>> = [];
+    prepareSync(): void {
+        const canPlayAll: Observable<any>[] = [];
 
-        for (let media in this.api.medias) {
+        for (const media in this.api.medias) {
             if (this.api.medias[ media ]) {
                 canPlayAll.push(this.api.medias[ media ].subscriptions.canPlay);
             }
         }
 
-        this.canPlayAllSubscription = combineLatest(canPlayAll,
+        this.canPlayAllSubscription = combineLatest(
+            canPlayAll,
             (...params) => {
-                let allReady: boolean = params.some(event => event.target.readyState === 4);
+                const allReady: boolean = params.some((event: any) => event.target.readyState === 4);
 
                 if (allReady && !this.syncSubscription) {
                     this.startSync();
@@ -201,12 +201,12 @@ export class VgMedia implements OnInit, OnDestroy, IPlayable {
         ).subscribe();
     }
 
-    startSync() {
+    startSync(): void {
         this.syncSubscription = timer(0, 1000).subscribe(
             () => {
-                for (let media in this.api.medias) {
+                for (const media in this.api.medias) {
                     if (this.api.medias[ media ] !== this) {
-                        let diff: number = this.api.medias[ media ].currentTime - this.currentTime;
+                        const diff: number = this.api.medias[ media ].currentTime - this.currentTime;
 
                         if (diff < -msFloatSub || diff > msFloatSub) {
                             this.playAfterSync = (this.state === VgStates.VG_PLAYING);
@@ -214,8 +214,7 @@ export class VgMedia implements OnInit, OnDestroy, IPlayable {
                             this.pause();
                             this.api.medias[ media ].pause();
                             this.api.medias[ media ].currentTime = this.currentTime;
-                        }
-                        else {
+                        } else {
                             if (this.playAfterSync) {
                                 this.play();
                                 this.api.medias[ media ].play();
@@ -228,10 +227,10 @@ export class VgMedia implements OnInit, OnDestroy, IPlayable {
         );
     }
 
-    onMutation(mutations: Array<MutationRecord>) {
+    onMutation(mutations: MutationRecord[]): void {
         // Detect changes only for source elements or src attribute
-        for (let i=0, l=mutations.length; i<l; i++) {
-            let mut: MutationRecord = mutations[i];
+        for (let i = 0, l = mutations.length; i < l; i++) {
+            const mut: MutationRecord = mutations[i];
 
             if (mut.type === 'attributes' && mut.attributeName === 'src') {
                 // Only load src file if it's not a blob (for DASH / HLS sources)
@@ -246,7 +245,7 @@ export class VgMedia implements OnInit, OnDestroy, IPlayable {
         }
     }
 
-    loadMedia() {
+    loadMedia(): void {
         this.vgMedia.pause();
         this.vgMedia.currentTime = 0;
 
@@ -259,10 +258,10 @@ export class VgMedia implements OnInit, OnDestroy, IPlayable {
         setTimeout(() => this.vgMedia.load(), 10);
     }
 
-    play() {
+    play(): Promise<any> | undefined {
         // short-circuit if already playing
         if (this.playPromise || (this.state !== VgStates.VG_PAUSED && this.state !== VgStates.VG_ENDED)) {
-            return;
+            return undefined;
         }
 
         if (this.time.left <= msFloatSub * 1000) {
@@ -286,22 +285,21 @@ export class VgMedia implements OnInit, OnDestroy, IPlayable {
         return this.playPromise;
     }
 
-    pause() {
+    pause(): void {
         // browser has async play promise
         if (this.playPromise) {
             this.playPromise
                 .then(() => {
                     this.vgMedia.pause();
                 });
-        }
-        else {
+        } else {
             this.vgMedia.pause();
         }
     }
 
-    get id() {
+    get id(): string | undefined {
         // We should return undefined if vgMedia still doesn't exist
-        let result = undefined;
+        let result;
 
         if (this.vgMedia) {
             result = this.vgMedia.id;
@@ -310,58 +308,58 @@ export class VgMedia implements OnInit, OnDestroy, IPlayable {
         return result;
     }
 
-    get duration() {
+    get duration(): number {
         return this.offset ? this.offset.end - this.offset.start : this.vgMedia.duration;
     }
 
-    set currentTime(seconds) {
+    set currentTime(seconds: number) {
         this.vgMedia.currentTime = seconds;
         // this.elem.dispatchEvent(new CustomEvent(VgEvents.VG_SEEK));
     }
 
-    get currentTime() {
+    get currentTime(): number {
         return this.vgMedia.currentTime;
     }
 
-    set volume(volume) {
+    set volume(volume: number) {
         this.vgMedia.volume = volume;
     }
 
-    get volume() {
+    get volume(): number {
         return this.vgMedia.volume;
     }
 
-    set playbackRate(rate) {
+    set playbackRate(rate: number) {
         this.vgMedia.playbackRate = rate;
     }
 
-    get playbackRate() {
+    get playbackRate(): number {
         return this.vgMedia.playbackRate;
     }
 
-    get buffered() {
+    get buffered(): TimeRanges {
         return this.vgMedia.buffered;
     }
 
-    get textTracks() {
+    get textTracks(): TextTrackList {
         return this.vgMedia.textTracks;
     }
 
-    onCanPlay(event: any) {
+    onCanPlay(): void {
         this.isBufferDetected = false;
         this.bufferDetected.next(this.isBufferDetected);
         this.canPlay = true;
         this.ref.detectChanges();
     }
 
-    onCanPlayThrough(event: any) {
+    onCanPlayThrough(): void {
         this.isBufferDetected = false;
         this.bufferDetected.next(this.isBufferDetected);
         this.canPlayThrough = true;
         this.ref.detectChanges();
     }
 
-    onLoadMetadata(event: any) {
+    onLoadMetadata(): void {
         this.isMetadataLoaded = true;
 
         this.time = {
@@ -373,28 +371,28 @@ export class VgMedia implements OnInit, OnDestroy, IPlayable {
         this.state = VgStates.VG_PAUSED;
 
         // Live streaming check
-        let t:number = Math.round(this.time.total);
+        const t: number = Math.round(this.time.total);
         this.isLive = (t === Infinity);
         this.ref.detectChanges();
     }
 
-    onWait(event: any) {
+    onWait(): void {
         this.isWaiting = true;
         this.ref.detectChanges();
     }
 
-    onComplete(event: any) {
+    onComplete(): void {
         this.isCompleted = true;
         this.state = VgStates.VG_ENDED;
         this.ref.detectChanges();
     }
 
-    onStartPlaying(event: any) {
+    onStartPlaying(): void {
         this.state = VgStates.VG_PLAYING;
         this.ref.detectChanges();
     }
 
-    onPlay(event: any) {
+    onPlay(): void {
         this.state = VgStates.VG_PLAYING;
 
         if (this.vgMaster) {
@@ -407,7 +405,7 @@ export class VgMedia implements OnInit, OnDestroy, IPlayable {
         this.ref.detectChanges();
     }
 
-    onPause(event: any) {
+    onPause(): void {
         this.state = VgStates.VG_PAUSED;
 
         if (this.vgMaster) {
@@ -420,8 +418,8 @@ export class VgMedia implements OnInit, OnDestroy, IPlayable {
         this.ref.detectChanges();
     }
 
-    onTimeUpdate(event: any) {
-        let end = this.buffered.length - 1;
+    onTimeUpdate(): void {
+        const end = this.buffered.length - 1;
 
         this.time = {
             current: this.offset ? (this.currentTime - this.offset.start) * 1000 : this.currentTime * 1000,
@@ -442,8 +440,8 @@ export class VgMedia implements OnInit, OnDestroy, IPlayable {
         this.ref.detectChanges();
     }
 
-    onProgress(event: any) {
-        let end = this.buffered.length - 1;
+    onProgress(): void {
+        const end = this.buffered.length - 1;
 
         if (end >= 0) {
             this.buffer = { end: this.buffered.end(end) * 1000 };
@@ -451,18 +449,18 @@ export class VgMedia implements OnInit, OnDestroy, IPlayable {
         this.ref.detectChanges();
     }
 
-    onVolumeChange(event: any) {
+    onVolumeChange(): void {
         // TODO: Save to localstorage the current volume
         this.ref.detectChanges();
     }
 
-    onError(event: any) {
+    onError(): void {
         // TODO: Handle error messages
         this.ref.detectChanges();
     }
 
     // http://stackoverflow.com/a/23828241/779529
-    bufferCheck() {
+    bufferCheck(): void {
         const offset = 1 / this.checkInterval;
         this.currentPlayPos = this.currentTime;
 
@@ -482,7 +480,7 @@ export class VgMedia implements OnInit, OnDestroy, IPlayable {
         this.lastPlayPos = this.currentPlayPos;
     }
 
-    startBufferCheck() {
+    startBufferCheck(): void {
         this.checkBufferSubscription = timer(0, this.checkInterval).subscribe(
             () => {
                 this.bufferCheck();
@@ -490,7 +488,7 @@ export class VgMedia implements OnInit, OnDestroy, IPlayable {
         );
     }
 
-    stopBufferCheck() {
+    stopBufferCheck(): void {
         if (this.checkBufferSubscription) {
             this.checkBufferSubscription.unsubscribe();
         }
@@ -500,22 +498,21 @@ export class VgMedia implements OnInit, OnDestroy, IPlayable {
         this.bufferDetected.next(this.isBufferDetected);
     }
 
-    seekTime(value:number, byPercent:boolean = false) {
-        let second:number;
-        let duration:number = this.duration;
+    seekTime(value: number, byPercent: boolean = false): void {
+        let second: number;
+        const duration: number = this.duration;
 
         if (byPercent) {
             second = value * duration / 100;
-        }
-        else {
+        } else {
             second = value;
         }
 
         this.currentTime = second;
     }
 
-    addTextTrack(type:string, label?:string, language?:string, mode?:'disabled' | 'hidden' | 'showing'): TextTrack {
-        const newTrack:TextTrack = this.vgMedia.addTextTrack(type, label, language);
+    addTextTrack(type: string, label?: string, language?: string, mode?: 'disabled' | 'hidden' | 'showing'): TextTrack {
+        const newTrack: TextTrack = this.vgMedia.addTextTrack(type, label, language);
 
         if (mode) {
             newTrack.mode = mode;
@@ -523,7 +520,7 @@ export class VgMedia implements OnInit, OnDestroy, IPlayable {
         return newTrack;
     }
 
-    ngOnDestroy() {
+    ngOnDestroy(): void {
         this.vgMedia.src = '';
         this.mutationObs.unsubscribe();
         this.canPlayObs.unsubscribe();
@@ -543,7 +540,7 @@ export class VgMedia implements OnInit, OnDestroy, IPlayable {
             this.checkBufferSubscription.unsubscribe();
         }
 
-        if(this.syncSubscription) {
+        if (this.syncSubscription) {
             this.syncSubscription.unsubscribe();
         }
 

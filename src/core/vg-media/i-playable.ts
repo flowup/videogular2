@@ -1,7 +1,7 @@
 import { OffsetModel } from './offset.model';
 import { Observable ,  Subject } from 'rxjs';
 
-export interface IPlayable {
+export interface PlayableModel {
     id: string;
     elem: any;
     time: any;
@@ -15,7 +15,7 @@ export interface IPlayable {
     isLive: boolean;
     textTracks: TextTrackList;
     state: string;
-    subscriptions: IMediaSubscriptions;
+    subscriptions: MediaSubscriptionsModel;
     duration: number;
     currentTime: number;
     play: Function;
@@ -25,7 +25,7 @@ export interface IPlayable {
     offset?: OffsetModel;
 }
 
-export interface IMediaSubscriptions {
+export interface MediaSubscriptionsModel {
     abort: Observable<any>;
     bufferDetected: Subject<boolean>;
     canPlay: Observable<any>;

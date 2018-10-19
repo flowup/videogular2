@@ -3,7 +3,6 @@ import { VgAPI } from '../../core/services/vg-api';
 import { VgFullscreenAPI } from '../../core/services/vg-fullscreen-api';
 import { Subscription } from 'rxjs';
 
-
 @Component({
     selector: 'vg-fullscreen',
     encapsulation: ViewEncapsulation.None,
@@ -41,7 +40,7 @@ import { Subscription } from 'rxjs';
 export class VgFullscreen implements OnInit, OnDestroy {
     elem: HTMLElement;
     vgFor: string;
-    target: Object;
+    target: {};
     isFullscreen = false;
 
     subscriptions: Subscription[] = [];
@@ -53,31 +52,30 @@ export class VgFullscreen implements OnInit, OnDestroy {
         this.subscriptions.push(this.fsAPI.onChangeFullscreen.subscribe(this.onChangeFullscreen.bind(this)));
     }
 
-    ngOnInit() {
+    ngOnInit(): void {
         if (this.API.isPlayerReady) {
             this.onPlayerReady();
-        }
-        else {
+        } else {
             this.subscriptions.push(this.API.playerReadyEvent.subscribe(() => this.onPlayerReady()));
         }
     }
 
-    onPlayerReady() {
+    onPlayerReady(): void {
         this.target = this.API.getMediaById(this.vgFor);
     }
 
-    onChangeFullscreen(fsState: boolean) {
+    onChangeFullscreen(fsState: boolean): void {
         this.ariaValue = fsState ? 'fullscren mode' : 'normal mode';
         this.isFullscreen = fsState;
     }
 
     @HostListener('click')
-    onClick() {
+    onClick(): void {
         this.changeFullscreenState();
     }
 
     @HostListener('keydown', ['$event'])
-    onKeyDown(event: KeyboardEvent) {
+    onKeyDown(event: KeyboardEvent): void {
         // On press Enter (13) or Space (32)
         if (event.keyCode === 13 || event.keyCode === 32) {
             event.preventDefault();
@@ -85,7 +83,7 @@ export class VgFullscreen implements OnInit, OnDestroy {
         }
     }
 
-    changeFullscreenState() {
+    changeFullscreenState(): void {
         let element = this.target;
 
         if (this.target instanceof VgAPI) {
@@ -95,7 +93,7 @@ export class VgFullscreen implements OnInit, OnDestroy {
         this.fsAPI.toggleFullscreen(element);
     }
 
-    ngOnDestroy() {
+    ngOnDestroy(): void {
         this.subscriptions.forEach(s => s.unsubscribe());
     }
 }

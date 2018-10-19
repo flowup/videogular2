@@ -1,29 +1,28 @@
-import {VgOverlayPlay} from "./vg-overlay-play";
-import {VgAPI} from "../core/services/vg-api";
-import {ElementRef} from "@angular/core";
-import {VgStates} from "../core/states/vg-states";
+import { VgOverlayPlay } from './vg-overlay-play';
+import { VgAPI } from '../core/services/vg-api';
+import { ElementRef } from '@angular/core';
+import { VgStates } from '../core/states/vg-states';
 import { VgFullscreenAPI } from '../core/services/vg-fullscreen-api';
 import { VgControlsHidden } from '../core/services/vg-controls-hidden';
 
 describe('Videogular Player', () => {
     let overlayPlay: VgOverlayPlay;
-    let ref:ElementRef;
-    let api:VgAPI;
-    let fsAPI:VgFullscreenAPI;
-    let controlsHidden:VgControlsHidden;
+    let ref: ElementRef;
+    let api: VgAPI;
+    let fsAPI: VgFullscreenAPI;
+    let controlsHidden: VgControlsHidden;
 
     beforeEach(() => {
         ref = {
             nativeElement: {
-                getAttribute: (name) => {
-                    return name;
-                }
+                getAttribute: (name) =>
+                    name
             }
         };
 
         controlsHidden = {
             isHidden: {
-                subscribe: () => {}
+                subscribe: () => undefined
             }
         } as VgControlsHidden;
 
@@ -49,13 +48,13 @@ describe('Videogular Player', () => {
     describe('onClick', () => {
         beforeEach(() => {
             overlayPlay.target = {
-                play: () => { },
-                pause: () => { }
+                play: () => undefined,
+                pause: () => undefined
             };
         });
 
         it('current state play should set target to pause', () => {
-            spyOn(overlayPlay, 'getState').and.callFake(() => { return VgStates.VG_PLAYING; });
+            spyOn(overlayPlay, 'getState').and.callFake(() => VgStates.VG_PLAYING);
             spyOn(overlayPlay.target, 'pause');
 
             overlayPlay.onClick();
@@ -65,7 +64,7 @@ describe('Videogular Player', () => {
         });
 
         it('current state pause should set target to play', () => {
-            spyOn(overlayPlay, 'getState').and.callFake(() => { return VgStates.VG_PAUSED; });
+            spyOn(overlayPlay, 'getState').and.callFake(() => VgStates.VG_PAUSED);
             spyOn(overlayPlay.target, 'play');
 
             overlayPlay.onClick();

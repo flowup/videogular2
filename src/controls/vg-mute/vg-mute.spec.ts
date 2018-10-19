@@ -1,18 +1,17 @@
-import {VgMute} from "./vg-mute";
-import {VgAPI} from "../../core/services/vg-api";
-import {ElementRef} from "@angular/core";
+import { VgMute } from './vg-mute';
+import { VgAPI } from '../../core/services/vg-api';
+import { ElementRef } from '@angular/core';
 
 describe('Mute Button', () => {
-    let mute:VgMute;
-    let ref:ElementRef;
-    let api:VgAPI;
+    let mute: VgMute;
+    let ref: ElementRef;
+    let api: VgAPI;
 
     beforeEach(() => {
         ref = {
             nativeElement: {
-                getAttribute: (name) => {
-                    return name;
-                }
+                getAttribute: (name) =>
+                    name
             }
         };
 
@@ -33,11 +32,10 @@ describe('Mute Button', () => {
     });
 
     it('Should get media by id on init', () => {
-        spyOn(api, 'getMediaById').and.callFake(() => {
-            return {
+        spyOn(api, 'getMediaById').and.callFake(() =>
+            ({
                 volume: 1
-            };
-        });
+            }));
 
         mute.vgFor = 'test';
         mute.onPlayerReady();
@@ -55,7 +53,7 @@ describe('Mute Button', () => {
 
         mute.target = api;
 
-        let volume = mute.getVolume();
+        const volume = mute.getVolume();
 
         expect(volume).toBe(1);
     });

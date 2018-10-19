@@ -1,6 +1,7 @@
+// tslint:disable-next-line:no-reference
 ///<reference path='./google.ima.ts'/>
 import { Component, ElementRef, Input, HostBinding, ViewEncapsulation, OnInit, OnDestroy, Output, EventEmitter } from '@angular/core';
-import { IPlayable } from '../core/vg-media/i-playable';
+import { PlayableModel } from '../core/vg-media/i-playable';
 import { VgAPI } from '../core/services/vg-api';
 import { VgEvents } from '../core/events/vg-events';
 import { VgFullscreenAPI } from '../core/services/vg-fullscreen-api';
@@ -30,7 +31,7 @@ export class VgImaAds implements OnInit, OnDestroy {
     @Input() vgNetwork: string;
     @Input() vgUnitPath: string;
     @Input() vgCompanion: string;
-    @Input() vgCompanionSize: Array<Number>;
+    @Input() vgCompanionSize: number[];
     @Input() vgAdTagUrl: string;
     @Input() vgSkipButton: string;
 
@@ -39,7 +40,7 @@ export class VgImaAds implements OnInit, OnDestroy {
     @Output() onSkipAd: EventEmitter<boolean> = new EventEmitter();
 
     elem: HTMLElement;
-    target: IPlayable;
+    target: PlayableModel;
     ima: Ima;
     isFullscreen = false;
     skipButton: HTMLElement;
@@ -53,17 +54,16 @@ export class VgImaAds implements OnInit, OnDestroy {
         this.onContentEnded = this.onContentEnded.bind(this);
     }
 
-    ngOnInit() {
+    ngOnInit(): void {
         if (this.API.isPlayerReady) {
             this.onPlayerReady();
-        }
-        else {
+        } else {
             this.subscriptions.push(this.API.playerReadyEvent.subscribe(() => this.onPlayerReady()));
         }
     }
 
-    onPlayerReady() {
-        if (typeof google === "undefined") {
+    onPlayerReady(): void {
+        if (typeof google === 'undefined') {
             this.onMissingGoogleImaLoader();
             return;
         }
@@ -78,12 +78,12 @@ export class VgImaAds implements OnInit, OnDestroy {
         this.subscriptions.push(this.fsAPI.onChangeFullscreen.subscribe(this.onChangeFullscreen.bind(this)));
 
         this.ima.adsLoader.addEventListener(
-            google.ima.AdsManagerLoadedEvent.Type.ADS_MANAGER_LOADED,
+            google.ima.AdsManagerLoadedEvent.type.ADS_MANAGER_LOADED,
             this.onAdsManagerLoaded.bind(this),
             false
         );
         this.ima.adsLoader.addEventListener(
-            google.ima.AdErrorEvent.Type.AD_ERROR,
+            google.ima.AdErrorEvent.type.AD_ERROR,
             this.onAdError.bind(this),
             false
         );
@@ -91,7 +91,7 @@ export class VgImaAds implements OnInit, OnDestroy {
         this.loadAds();
     }
 
-    initializations() {
+    initializations(): void {
         this.ima = new Ima(this.elem);
 
         if (this.vgSkipButton) {
@@ -108,19 +108,18 @@ export class VgImaAds implements OnInit, OnDestroy {
             if (this.ima.adsManager) {
                 if (this.isFullscreen) {
                     this.ima.adsManager.resize(w, h, google.ima.ViewMode.FULLSCREEN);
-                }
-                else {
+                } else {
                     this.ima.adsManager.resize(w, h, google.ima.ViewMode.NORMAL);
                 }
             }
         });
     }
 
-    loadAds() {
+    loadAds(): void {
         if (this.vgCompanion) {
             googletag.cmd.push(
                 () => {
-                    const adUnitPath: string = '/' + this.vgNetwork + '/' + this.vgUnitPath;
+                    const adUnitPath = `/${this.vgNetwork}/${this.vgUnitPath}`;
                     const slot: googletag.Slot = googletag.defineSlot(adUnitPath, this.vgCompanionSize, this.vgCompanion);
 
                     if (slot) {
@@ -142,7 +141,7 @@ export class VgImaAds implements OnInit, OnDestroy {
         }
     }
 
-    onUpdateState(event: any) {
+    onUpdateState(event: any): void {
         switch (event.type) {
             case VgEvents.VG_PLAY:
                 if (!this.ima.adsLoaded) {
@@ -155,7 +154,7 @@ export class VgImaAds implements OnInit, OnDestroy {
         }
     }
 
-    requestAds(adTagUrl: string) {
+    requestAds(adTagUrl: string): void {
         // Show only to get computed style in pixels
         this.show();
 
@@ -171,44 +170,44 @@ export class VgImaAds implements OnInit, OnDestroy {
         this.ima.adsLoader.requestAds(adsRequest);
     }
 
-    onAdsManagerLoaded(evt: google.ima.AdsManagerLoadedEvent) {
+    onAdsManagerLoaded(evt: google.ima.AdsManagerLoadedEvent): void {
         this.show();
         this.ima.adsManager = evt.getAdsManager(this.target);
-        this.processAdsManager(this.ima.adsManager);
+        this.processAdsManager();
     }
 
-    processAdsManager(adsManager: google.ima.AdsManager) {
+    processAdsManager(): void {
         const w = this.API.videogularElement.offsetWidth;
         const h = this.API.videogularElement.offsetHeight;
 
         // Attach the pause/resume events.
         this.ima.adsManager.addEventListener(
-            google.ima.AdEvent.Type.CONTENT_PAUSE_REQUESTED,
+            google.ima.AdEvent.type.CONTENT_PAUSE_REQUESTED,
             this.onContentPauseRequested.bind(this),
             false
         );
         this.ima.adsManager.addEventListener(
-            google.ima.AdEvent.Type.CONTENT_RESUME_REQUESTED,
+            google.ima.AdEvent.type.CONTENT_RESUME_REQUESTED,
             this.onContentResumeRequested.bind(this),
             false
         );
         this.ima.adsManager.addEventListener(
-            google.ima.AdEvent.Type.SKIPPABLE_STATE_CHANGED,
+            google.ima.AdEvent.type.SKIPPABLE_STATE_CHANGED,
             this.onSkippableStateChanged.bind(this),
             false
         );
         this.ima.adsManager.addEventListener(
-            google.ima.AdEvent.Type.ALL_ADS_COMPLETED,
+            google.ima.AdEvent.type.ALL_ADS_COMPLETED,
             this.onAllAdsComplete.bind(this),
             false
         );
         this.ima.adsManager.addEventListener(
-            google.ima.AdEvent.Type.COMPLETE,
+            google.ima.AdEvent.type.COMPLETE,
             this.onAdComplete.bind(this),
             false
         );
         this.ima.adsManager.addEventListener(
-            google.ima.AdErrorEvent.Type.AD_ERROR,
+            google.ima.AdErrorEvent.type.AD_ERROR,
             this.onAdError.bind(this),
             false
         );
@@ -217,7 +216,7 @@ export class VgImaAds implements OnInit, OnDestroy {
         this.ima.adsManager.start();
     }
 
-    onSkippableStateChanged() {
+    onSkippableStateChanged(): void {
         const isSkippable = this.ima.adsManager.getAdSkippableState();
 
         if (isSkippable) {
@@ -227,24 +226,24 @@ export class VgImaAds implements OnInit, OnDestroy {
         }
     }
 
-    onClickSkip() {
+    onClickSkip(): void {
         this.ima.adsManager.skip();
         this.onSkipAd.emit(true);
     }
 
-    onContentPauseRequested() {
+    onContentPauseRequested(): void {
         this.show();
         this.API.pause();
         this.onAdStop.emit(true);
     }
 
-    onContentResumeRequested() {
+    onContentResumeRequested(): void {
         this.API.play();
         this.onAdStart.emit(true);
         this.hide();
     }
 
-    onAdError(evt) {
+    onAdError(): void {
         if (this.ima.adsManager) {
             this.ima.adsManager.destroy();
         }
@@ -253,7 +252,7 @@ export class VgImaAds implements OnInit, OnDestroy {
         this.onAdStop.emit(true);
     }
 
-    onAllAdsComplete() {
+    onAllAdsComplete(): void {
         this.hide();
         // The last ad was a post-roll
         if (this.ima.adsManager.getCuePoints().join().indexOf('-1') >= 0) {
@@ -262,39 +261,39 @@ export class VgImaAds implements OnInit, OnDestroy {
         }
     }
 
-    onAdComplete() {
+    onAdComplete(): void {
         // TODO: Update view with current ad count
         this.ima.currentAd++;
         this.onAdStop.emit(true);
     }
 
-    show() {
+    show(): void {
         window.dispatchEvent(new CustomEvent(VgEvents.VG_START_ADS));
         this.displayState = 'block';
     }
 
-    hide() {
+    hide(): void {
         window.dispatchEvent(new CustomEvent(VgEvents.VG_END_ADS));
         this.displayState = 'none';
     }
 
-    onContentEnded() {
+    onContentEnded(): void {
         this.ima.adsLoader.contentComplete();
         this.onAdStop.emit(true);
     }
 
-    onChangeFullscreen(fsState: boolean) {
+    onChangeFullscreen(fsState: boolean): void {
         if (!this.fsAPI.nativeFullscreen) {
             this.isFullscreen = fsState;
         }
     }
 
-    private onMissingGoogleImaLoader() {
+    private onMissingGoogleImaLoader(): void {
         this.hide();
         this.API.play();
     }
 
-    ngOnDestroy() {
+    ngOnDestroy(): void {
         this.subscriptions.forEach(s => s.unsubscribe());
     }
 }

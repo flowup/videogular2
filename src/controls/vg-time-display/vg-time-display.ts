@@ -6,7 +6,7 @@ import { Subscription } from 'rxjs';
 @Pipe({ name: 'vgUtc' })
 export class VgUtcPipe implements PipeTransform {
     transform(value: number, format: string): string {
-        let date = new Date(value);
+        const date = new Date(value);
         let result = format;
         let ss: string|number = date.getUTCSeconds();
         let mm: string|number = date.getUTCMinutes();
@@ -71,20 +71,19 @@ export class VgTimeDisplay implements OnInit, OnDestroy {
         this.elem = ref.nativeElement;
     }
 
-    ngOnInit() {
+    ngOnInit(): void {
         if (this.API.isPlayerReady) {
             this.onPlayerReady();
-        }
-        else {
+        } else {
             this.subscriptions.push(this.API.playerReadyEvent.subscribe(() => this.onPlayerReady()));
         }
     }
 
-    onPlayerReady() {
+    onPlayerReady(): void {
         this.target = this.API.getMediaById(this.vgFor);
     }
 
-    getTime() {
+    getTime(): number {
         let t = 0;
 
         if (this.target) {
@@ -95,7 +94,7 @@ export class VgTimeDisplay implements OnInit, OnDestroy {
         return t;
     }
 
-    ngOnDestroy() {
+    ngOnDestroy(): void {
         this.subscriptions.forEach(s => s.unsubscribe());
     }
 }

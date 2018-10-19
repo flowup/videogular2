@@ -22,7 +22,7 @@ import { Subscription } from 'rxjs';
              [attr.aria-valuetext]="getPercentage() + '%'">
             <ng-content></ng-content>
         </div>
-        
+
     `,
     styles: [ `
         vg-scrub-bar {
@@ -46,7 +46,7 @@ import { Subscription } from 'rxjs';
             -ms-transition: bottom 1s, opacity 0.5s;
             transition: bottom 1s, opacity 0.5s;
         }
-        
+
         vg-scrub-bar .scrubBar {
             position: relative;
             display: flex;
@@ -99,20 +99,19 @@ export class VgScrubBar implements OnInit, OnDestroy {
         this.subscriptions.push(vgControlsHiddenState.isHidden.subscribe(hide => this.onHideScrubBar(hide)));
     }
 
-    ngOnInit() {
+    ngOnInit(): void {
         if (this.API.isPlayerReady) {
             this.onPlayerReady();
-        }
-        else {
+        } else {
             this.subscriptions.push(this.API.playerReadyEvent.subscribe(() => this.onPlayerReady()));
         }
     }
 
-    onPlayerReady() {
+    onPlayerReady(): void {
         this.target = this.API.getMediaById(this.vgFor);
     }
 
-    protected seekStart() {
+    protected seekStart(): void {
         if (this.target.canPlay) {
             this.isSeeking = true;
             if (this.target.state === VgStates.VG_PLAYING) {
@@ -122,18 +121,18 @@ export class VgScrubBar implements OnInit, OnDestroy {
         }
     }
 
-    protected seekMove(offset: number) {
+    protected seekMove(offset: number): void {
         if (this.isSeeking) {
-            let percentage = Math.max(Math.min(offset * 100 / this.elem.scrollWidth, 99.9), 0);
+            const percentage = Math.max(Math.min(offset * 100 / this.elem.scrollWidth, 99.9), 0);
             this.target.time.current = percentage * this.target.time.total / 100;
             this.target.seekTime(percentage, true);
         }
     }
 
-    protected seekEnd(offset: number) {
+    protected seekEnd(offset: number): void {
         this.isSeeking = false;
         if (this.target.canPlay) {
-            let percentage = Math.max(Math.min(offset * 100 / this.elem.scrollWidth, 99.9), 0);
+            const percentage = Math.max(Math.min(offset * 100 / this.elem.scrollWidth, 99.9), 0);
             this.target.seekTime(percentage, true);
             if (this.wasPlaying) {
                 this.wasPlaying = false;
@@ -142,7 +141,7 @@ export class VgScrubBar implements OnInit, OnDestroy {
         }
     }
 
-    protected touchEnd() {
+    protected touchEnd(): void {
         this.isSeeking = false;
         if (this.wasPlaying) {
             this.wasPlaying = false;
@@ -150,7 +149,7 @@ export class VgScrubBar implements OnInit, OnDestroy {
         }
     }
 
-    protected getTouchOffset(event: any) {
+    protected getTouchOffset(event: any): number {
         let offsetLeft = 0;
         let element: any = event.target;
         while (element) {
@@ -161,13 +160,12 @@ export class VgScrubBar implements OnInit, OnDestroy {
     }
 
     @HostListener('mousedown', [ '$event' ])
-    onMouseDownScrubBar($event: any) {
+    onMouseDownScrubBar($event: any): void {
         if (this.target) {
             if (!this.target.isLive) {
                 if (!this.vgSlider) {
                     this.seekEnd($event.offsetX);
-                }
-                else {
+                } else {
                     this.seekStart();
                 }
             }
@@ -175,7 +173,7 @@ export class VgScrubBar implements OnInit, OnDestroy {
     }
 
     @HostListener('document:mousemove', [ '$event' ])
-    onMouseMoveScrubBar($event: any) {
+    onMouseMoveScrubBar($event: any): void {
         if (this.target) {
             if (!this.target.isLive && this.vgSlider && this.isSeeking) {
                 this.seekMove($event.offsetX);
@@ -184,7 +182,7 @@ export class VgScrubBar implements OnInit, OnDestroy {
     }
 
     @HostListener('document:mouseup', [ '$event' ])
-    onMouseUpScrubBar($event: any) {
+    onMouseUpScrubBar($event: any): void {
         if (this.target) {
             if (!this.target.isLive && this.vgSlider && this.isSeeking) {
                 this.seekEnd($event.offsetX);
@@ -193,13 +191,12 @@ export class VgScrubBar implements OnInit, OnDestroy {
     }
 
     @HostListener('touchstart', [ '$event' ])
-    onTouchStartScrubBar($event: any) {
+    onTouchStartScrubBar($event: any): void {
         if (this.target) {
             if (!this.target.isLive) {
                 if (!this.vgSlider) {
                     this.seekEnd(this.getTouchOffset($event));
-                }
-                else {
+                } else {
                     this.seekStart();
                 }
             }
@@ -207,7 +204,7 @@ export class VgScrubBar implements OnInit, OnDestroy {
     }
 
     @HostListener('document:touchmove', [ '$event' ])
-    onTouchMoveScrubBar($event: any) {
+    onTouchMoveScrubBar($event: any): void {
         if (this.target) {
             if (!this.target.isLive && this.vgSlider && this.isSeeking) {
                 this.seekMove(this.getTouchOffset($event));
@@ -216,7 +213,7 @@ export class VgScrubBar implements OnInit, OnDestroy {
     }
 
     @HostListener('document:touchcancel', [ '$event' ])
-    onTouchCancelScrubBar($event: any) {
+    onTouchCancelScrubBar(): void {
         if (this.target) {
             if (!this.target.isLive && this.vgSlider && this.isSeeking) {
                 this.touchEnd();
@@ -225,7 +222,7 @@ export class VgScrubBar implements OnInit, OnDestroy {
     }
 
     @HostListener('document:touchend', [ '$event' ])
-    onTouchEndScrubBar($event: any) {
+    onTouchEndScrubBar(): void {
         if (this.target) {
             if (!this.target.isLive && this.vgSlider && this.isSeeking) {
                 this.touchEnd();
@@ -234,28 +231,27 @@ export class VgScrubBar implements OnInit, OnDestroy {
     }
 
     @HostListener('keydown', ['$event'])
-    arrowAdjustVolume(event: KeyboardEvent) {
+    arrowAdjustVolume(event: KeyboardEvent): void {
         if (this.target) {
             if (event.keyCode === 38 || event.keyCode === 39) {
                 event.preventDefault();
                 this.target.seekTime((this.target.time.current + 5000) / 1000, false);
-            }
-            else if (event.keyCode === 37 || event.keyCode === 40) {
+            } else if (event.keyCode === 37 || event.keyCode === 40) {
                 event.preventDefault();
                 this.target.seekTime((this.target.time.current - 5000) / 1000, false);
             }
         }
     }
 
-    getPercentage() {
+    getPercentage(): string {
         return this.target ? ((this.target.time.current * 100) / this.target.time.total) + '%' : '0%';
     }
 
-    onHideScrubBar(hide: boolean) {
+    onHideScrubBar(hide: boolean): void {
         this.hideScrubBar = hide;
     }
 
-    ngOnDestroy() {
+    ngOnDestroy(): void {
         this.subscriptions.forEach(s => s.unsubscribe());
     }
 }

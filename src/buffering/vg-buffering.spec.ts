@@ -1,20 +1,16 @@
-import {VgBuffering} from "./vg-buffering";
-import {VgAPI} from "../core/services/vg-api";
-import {IPlayable} from "../core/vg-media/i-playable";
-import {ElementRef} from "@angular/core";
-import { VgStates } from "../core/states/vg-states";
+import { VgBuffering } from './vg-buffering';
+import { VgAPI } from '../core/services/vg-api';
+import { ElementRef } from '@angular/core';
 
 describe('Buffering', () => {
-    let vgBuffering:VgBuffering;
-    let ref:ElementRef;
-    let api:VgAPI;
+    let vgBuffering: VgBuffering;
+    let ref: ElementRef;
+    let api: VgAPI;
 
     beforeEach(() => {
         ref = {
             nativeElement: {
-                getAttribute: (name) => {
-                    return name;
-                }
+                getAttribute: (name) => name
             }
         };
 
@@ -22,8 +18,8 @@ describe('Buffering', () => {
         vgBuffering = new VgBuffering(ref, api);
     });
 
-    describe('onPlayerReady', ()=>{
-        it('should subscribe to bufferDetected media events', ()=>{
+    describe('onPlayerReady', () => {
+        it('should subscribe to bufferDetected media events', () => {
             spyOn(api, 'getMediaById').and.returnValue({
                 subscriptions: {
                     bufferDetected: {subscribe: jasmine.createSpy('bufferDetected') }
@@ -34,7 +30,7 @@ describe('Buffering', () => {
         });
     });
 
-    describe('isBuffering', ()=> {
+    describe('isBuffering', () => {
         it('should show if buffer is detected', () => {
             vgBuffering.onUpdateBuffer(true);
             expect(vgBuffering.isBuffering).toBe(true);
