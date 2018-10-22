@@ -25,6 +25,7 @@ export * from './states/vg-states';
 
 // interfaces
 export * from './vg-media/i-media-element';
+export * from './vg-media/offset.model';
 
 export interface BitrateOption {
     qualityIndex: number;

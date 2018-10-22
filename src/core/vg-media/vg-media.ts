@@ -19,14 +19,18 @@ export class VgMediaDirective implements OnInit, OnDestroy, PlayableModel {
     @Input() vgMedia: MediaElementModel;
     @Input() vgMaster: boolean;
     @Input() set vgOffset(offset: OffsetModel) {
-        if (this.vgMedia.duration < offset.end) {
-            offset.end = this.vgMedia.duration;
-        }
-        if (offset.start < 0) {
-            offset.start = 0;
-        }
+        setTimeout(() => {
+            if (this.vgMedia.duration < offset.end) {
+                offset.end = this.vgMedia.duration;
+            }
 
-        this.offset = offset;
+            if (offset.start < 0) {
+                offset.start = 0;
+            }
+
+            this.offset = offset;
+        }, 0)
+
         // Disabled for now, not supported by all browsers and it changes src of video so it stops
         // Maybe will be enabled later via config
         // Must be in setTimeout otherwise coreSrc is undefined
@@ -40,7 +44,7 @@ export class VgMediaDirective implements OnInit, OnDestroy, PlayableModel {
             } else if (offset.jumpToEnd) {
                 this.seekTime(offset.end);
             }
-        },         0);
+        }, 0);
     }
 
     offset: OffsetModel;

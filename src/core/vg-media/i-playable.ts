@@ -2,7 +2,7 @@ import { OffsetModel } from './offset.model';
 import { Observable ,  Subject } from 'rxjs';
 
 export interface PlayableModel {
-    id: string;
+    id?: string;
     elem: any;
     time: any;
     buffer: any;

@@ -2,7 +2,7 @@
     "compilerOptions": {
         "sourceMap": true,
         "removeComments": true,
-        "declaration": false,
+        "declaration": true,
         "moduleResolution": "node",
         "emitDecoratorMetadata": true,
         "experimentalDecorators": true,
