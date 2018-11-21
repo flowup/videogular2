@@ -14,7 +14,8 @@ export class VgUtcPipe implements PipeTransform {
 
         if (format.includes('mmm')) {
 
-          let hourToMin = hh * 60;
+          // tslint:disable-next-line:no-magic-numbers
+          const hourToMin = hh * 60;
           mm = mm + hourToMin;
 
           if (ss < 10) {

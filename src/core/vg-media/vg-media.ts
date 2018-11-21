@@ -2,6 +2,7 @@ import { OffsetModel } from './offset.model';
 import { ChangeDetectorRef, OnInit, Directive, Input, OnDestroy } from '@angular/core';
 import { PlayableModel, MediaSubscriptionsModel } from './i-playable';
 import { Observable, Subscription, Subject, fromEvent, timer, combineLatest } from 'rxjs';
+import { filter, take } from 'rxjs/operators';
 
 import { VgStates } from '../states/vg-states';
 import { VgAPI } from '../services/vg-api';
@@ -19,17 +20,22 @@ export class VgMediaDirective implements OnInit, OnDestroy, PlayableModel {
     @Input() vgMedia: MediaElementModel;
     @Input() vgMaster: boolean;
     @Input() set vgOffset(offset: OffsetModel) {
-        setTimeout(() => {
-            if (this.vgMedia.duration < offset.end) {
-                offset.end = this.vgMedia.duration;
-            }
+        this.subscriptions.loadedMetadata.pipe(
+            filter(() => this.isMetadataLoaded),
+            take(1),
+        ).subscribe(
+            () => {
+                if (this.vgMedia.duration < offset.end) {
+                    offset.end = this.vgMedia.duration;
+                }
 
-            if (offset.start < 0) {
-                offset.start = 0;
-            }
+                if (offset.start < 0) {
+                    offset.start = 0;
+                }
 
-            this.offset = offset;
-        }, 0)
+                this.offset = offset;
+            }
+        );
 
         // Disabled for now, not supported by all browsers and it changes src of video so it stops
         // Maybe will be enabled later via config
@@ -38,13 +44,16 @@ export class VgMediaDirective implements OnInit, OnDestroy, PlayableModel {
         //     this.vgMedia.src = `${this.coreSrc}#t=${offset.start},${offset.end}`;
         // }, 0);
 
-        setTimeout(() => {
-            if (offset.jumpToStart) {
-                this.seekTime(offset.start);
-            } else if (offset.jumpToEnd) {
-                this.seekTime(offset.end);
-            }
-        }, 0);
+        setTimeout(
+            () => {
+                if (offset.jumpToStart) {
+                    this.seekTime(offset.start);
+                } else if (offset.jumpToEnd) {
+                    this.seekTime(offset.end);
+                }
+            },
+            0
+        );
     }
 
     offset: OffsetModel;
@@ -55,7 +64,7 @@ export class VgMediaDirective implements OnInit, OnDestroy, PlayableModel {
     time: any = { current: 0, total: 0, left: 0 };
     buffer: any = { end: 0 };
     track: any;
-    subscriptions: MediaSubscriptionsModel | any;
+    subscriptions: MediaSubscriptionsModel;
 
     canPlay = false;
     canPlayThrough = false;

@@ -51,6 +51,8 @@ export interface MediaSubscriptionsModel {
     volumeChange: Observable<any>;
     waiting: Observable<any>;
 
+    mutation: Observable<any>;
+
     // to observe the ads
     startAds: Observable<any>;
     endAds: Observable<any>;
