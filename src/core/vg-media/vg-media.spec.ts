@@ -85,7 +85,6 @@ describe('Videogular Media', () => {
     });
 
     it('Should have setter/getter props', () => {
-        expect(media.duration).toBe(100);
         expect(media.currentTime).toBe(0);
         expect(media.volume).toBe(1);
         expect(media.playbackRate).toBe(1);

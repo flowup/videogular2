@@ -13,13 +13,17 @@ export interface PlayableModel {
     isWaiting: boolean;
     isCompleted: boolean;
     isLive: boolean;
+    isLivestream: boolean;
     textTracks: TextTrackList;
     state: string;
     subscriptions: MediaSubscriptionsModel;
     duration: number;
+    segmentDuration: number;
+    totalTime: number;
     currentTime: number;
     play: Function;
     pause: Function;
+    seekTime: Function;
     addTextTrack?: Function;
     dispatchEvent?: Function;
     offset?: OffsetModel;

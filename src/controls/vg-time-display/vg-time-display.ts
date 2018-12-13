@@ -1,3 +1,4 @@
+import { OffsetModel } from './../../core/vg-media/offset.model';
 import { Component, Input, ElementRef, OnInit, PipeTransform, Pipe, ViewEncapsulation, OnDestroy } from '@angular/core';
 import { VgAPI } from '../../core/services/vg-api';
 import { Subscription } from 'rxjs';
@@ -56,7 +57,17 @@ export class VgUtcPipe implements PipeTransform {
     encapsulation: ViewEncapsulation.None,
     template: `
         <span *ngIf="target?.isLive">LIVE</span>
-        <span *ngIf="!target?.isLive">{{ getTime() | vgUtc:vgFormat }}</span>
+        <div
+            *ngIf="target?.isLivestream && vgProperty !== 'current' && !vgOffset"
+            (click)="followLive()"
+            class="time-display--follow-live-btn"
+        >
+            <span>LIVE</span>
+            <span [class.dot]="isStreamLive()"></span>
+        </div>
+        <span *ngIf="!target?.isLive && !(target?.isLivestream && vgProperty !== 'current' && !vgOffset)">
+            {{ getTime() | vgUtc:vgFormat }}
+        </span>
         <ng-content></ng-content>
     `,
     styles: [ `
@@ -68,13 +79,31 @@ export class VgUtcPipe implements PipeTransform {
             user-select: none;
             display: flex;
             justify-content: center;
-            height: 50px;
+            height: 30px;
             width: 60px;
             cursor: pointer;
             color: white;
-            line-height: 50px;
+            line-height: 30px;
             pointer-events: none;
             font-family: Helvetica Neue, Helvetica, Arial, sans-serif;
+        }
+
+        .dot {
+            height: 40%;
+            width: 20%;
+            border-radius: 100%;
+            background-color: red;
+            margin-left: 10px;
+        }
+
+        .time-display--follow-live-btn {
+            pointer-events: all;
+            display: flex;
+            flex-direction: row;
+            justify-content: center;
+            align-items: center;
+            height: 100%;
+            width: 100%;
         }
     ` ]
 })
@@ -82,6 +111,7 @@ export class VgTimeDisplayComponent implements OnInit, OnDestroy {
     @Input() vgFor: string;
     @Input() vgProperty = 'current';
     @Input() vgFormat = 'mm:ss';
+    @Input() vgOffset: OffsetModel;
 
     elem: HTMLElement;
     target: any;
@@ -100,8 +130,29 @@ export class VgTimeDisplayComponent implements OnInit, OnDestroy {
         }
     }
 
+    isStreamLive(): boolean {
+        // tslint:disable-next-line:no-magic-numbers
+        return this.API.duration - this.API.currentTime <= this.API.segmentDuration + 5;
+    }
+
+    followLive(): void {
+        if (this.isStreamLive()) {
+            return;
+        }
+
+        this.API.currentTime = this.API.duration;
+        this.API.play();
+        if (this.target) {
+            this.target.followLive = true;
+        }
+    }
+
     onPlayerReady(): void {
-        this.target = this.API.getMediaById(this.vgFor);
+        if (this.vgFor) {
+            this.target = this.API.getMediaById(this.vgFor);
+        } else {
+            this.target = this.API.getDefaultMedia();
+        }
     }
 
     getTime(): number {

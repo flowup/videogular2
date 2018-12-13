@@ -1,3 +1,4 @@
+import { OffsetModel } from './../vg-media/offset.model';
 import { Injectable, EventEmitter } from '@angular/core';
 import { PlayableModel } from '../vg-media/i-playable';
 import { VgStates } from '../states/vg-states';
@@ -79,6 +80,10 @@ export class VgAPI {
         return this.$$getAllProperties('duration');
     }
 
+    get segmentDuration(): number {
+        return this.$$getAllProperties('segmentDuration');
+    }
+
     set currentTime(seconds: number) {
         this.$$setAllProperties('currentTime', seconds);
     }
@@ -135,8 +140,16 @@ export class VgAPI {
         return this.$$getAllProperties('isLive');
     }
 
+    get isLivestream(): boolean {
+        return this.$$getAllProperties('isLivestream');
+    }
+
     get isMaster(): boolean {
         return this.$$getAllProperties('isMaster');
+    }
+
+    get offset(): OffsetModel {
+        return this.$$getAllProperties('offset');
     }
 
     get time(): any {
@@ -173,11 +186,13 @@ export class VgAPI {
 
         if (byPercent) {
             if (this.isMasterDefined()) {
-                duration = this.getMasterMedia().duration;
+                const masterMedia = this.getMasterMedia();
+                duration = masterMedia.duration;
             }
 
             if (media.offset) {
-                second = (value * duration / 100) + media.offset.start;
+                const offsetDuration = media.offset.end - media.offset.start;
+                second = (value * offsetDuration / 100) + media.offset.start;
             } else {
                 second = value * duration / 100;
             }

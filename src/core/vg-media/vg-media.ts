@@ -1,5 +1,4 @@
-import { OffsetModel } from './offset.model';
-import { ChangeDetectorRef, OnInit, Directive, Input, OnDestroy } from '@angular/core';
+import { ChangeDetectorRef, Directive, Input, OnDestroy, OnInit } from '@angular/core';
 import { PlayableModel, MediaSubscriptionsModel } from './i-playable';
 import { Observable, Subscription, Subject, fromEvent, timer, combineLatest } from 'rxjs';
 import { filter, take } from 'rxjs/operators';
@@ -8,6 +7,7 @@ import { VgStates } from '../states/vg-states';
 import { VgAPI } from '../services/vg-api';
 import { VgEvents } from '../events/vg-events';
 import { MediaElementModel } from './i-media-element';
+import { OffsetModel } from './offset.model';
 
 const msFloatSub = 0.3;
 
@@ -19,22 +19,27 @@ export class VgMediaDirective implements OnInit, OnDestroy, PlayableModel {
 
     @Input() vgMedia: MediaElementModel;
     @Input() vgMaster: boolean;
-    @Input() set vgOffset(offset: OffsetModel) {
-        this.subscriptions.loadedMetadata.pipe(
-            filter(() => this.isMetadataLoaded),
-            take(1),
-        ).subscribe(
+    @Input() set vgOffset(offset: OffsetModel | undefined) {
+        if (!offset || (offset.start === 0 && offset.end === 0)) {
+            return;
+        }
+
+        setTimeout(
             () => {
-                if (this.vgMedia.duration < offset.end) {
-                    offset.end = this.vgMedia.duration;
+                if (!this.isMetadataLoaded) {
+                    this.subscriptions.loadedMetadata.pipe(
+                        filter(() => this.isMetadataLoaded),
+                        take(1),
+                    ).subscribe(
+                        () => {
+                            this.setOffset(offset);
+                        }
+                    );
+                } else {
+                    this.setOffset(offset);
                 }
-
-                if (offset.start < 0) {
-                    offset.start = 0;
-                }
-
-                this.offset = offset;
-            }
+            },
+            0
         );
 
         // Disabled for now, not supported by all browsers and it changes src of video so it stops
@@ -43,25 +48,15 @@ export class VgMediaDirective implements OnInit, OnDestroy, PlayableModel {
         // setTimeout(() => {
         //     this.vgMedia.src = `${this.coreSrc}#t=${offset.start},${offset.end}`;
         // }, 0);
-
-        setTimeout(
-            () => {
-                if (offset.jumpToStart) {
-                    this.seekTime(offset.start);
-                } else if (offset.jumpToEnd) {
-                    this.seekTime(offset.end);
-                }
-            },
-            0
-        );
     }
 
     offset: OffsetModel;
-    coreSrc: string;
+    // coreSrc: string;
 
     state: string = VgStates.VG_PAUSED;
 
     time: any = { current: 0, total: 0, left: 0 };
+    totalTime: number;
     buffer: any = { end: 0 };
     track: any;
     subscriptions: MediaSubscriptionsModel;
@@ -72,6 +67,8 @@ export class VgMediaDirective implements OnInit, OnDestroy, PlayableModel {
     isWaiting = false;
     isCompleted = false;
     isLive = false;
+    isLivestream = false;
+    segmentDuration = 10;
 
     isBufferDetected = false;
 
@@ -102,12 +99,10 @@ export class VgMediaDirective implements OnInit, OnDestroy, PlayableModel {
 
     playPromise: Promise<any>;
 
-    constructor(private api: VgAPI, private ref: ChangeDetectorRef) {
-
-    }
+    constructor(private api: VgAPI, private ref: ChangeDetectorRef) {}
 
     ngOnInit(): void {
-        this.coreSrc = this.vgMedia.src;
+        // this.coreSrc = this.vgMedia.src;
         if (this.vgMedia.nodeName) {
             // It's a native element
             this.elem = this.vgMedia;
@@ -261,6 +256,7 @@ export class VgMediaDirective implements OnInit, OnDestroy, PlayableModel {
 
     loadMedia(): void {
         this.vgMedia.pause();
+
         this.vgMedia.currentTime = 0;
 
         // Start buffering until we can play the media file
@@ -323,7 +319,7 @@ export class VgMediaDirective implements OnInit, OnDestroy, PlayableModel {
     }
 
     get duration(): number {
-        return this.offset ? this.offset.end - this.offset.start : this.vgMedia.duration;
+        return this.offset ? this.vgMedia.duration : this.totalTime || this.vgMedia.duration;
     }
 
     set currentTime(seconds: number) {
@@ -376,10 +372,15 @@ export class VgMediaDirective implements OnInit, OnDestroy, PlayableModel {
     onLoadMetadata(): void {
         this.isMetadataLoaded = true;
 
+        let total = this.duration * 1000;
+        if (this.offset) {
+            total = (this.offset.end - this.offset.start) * 1000;
+        }
+
         this.time = {
             current: 0,
             left: 0,
-            total: this.offset ? (this.offset.end - this.offset.start) * 1000 : this.duration * 1000
+            total,
         };
 
         this.state = VgStates.VG_PAUSED;
@@ -387,6 +388,7 @@ export class VgMediaDirective implements OnInit, OnDestroy, PlayableModel {
         // Live streaming check
         const t: number = Math.round(this.time.total);
         this.isLive = (t === Infinity);
+
         this.ref.detectChanges();
     }
 
@@ -435,12 +437,21 @@ export class VgMediaDirective implements OnInit, OnDestroy, PlayableModel {
     onTimeUpdate(): void {
         const end = this.buffered.length - 1;
 
+        let current: number;
+        let total: number;
+        if (this.offset) {
+            current = (this.currentTime - this.offset.start) * 1000;
+            total = (this.offset.end - this.offset.start) * 1000;
+        } else {
+            current = this.currentTime * 1000;
+            total = this.duration * 1000;
+        }
+        const left = total - current;
+
         this.time = {
-            current: this.offset ? (this.currentTime - this.offset.start) * 1000 : this.currentTime * 1000,
-            total: this.offset ? (this.offset.end - this.offset.start) * 1000 : this.duration * 1000,
-            left: this.offset
-                ? (this.duration - this.currentTime + this.offset.start + msFloatSub) * 1000
-                : (this.duration - this.currentTime) * 1000
+            current,
+            total,
+            left,
         };
 
         if (end >= 0) {
@@ -449,6 +460,8 @@ export class VgMediaDirective implements OnInit, OnDestroy, PlayableModel {
 
         if (this.time.left <= 0) {
             this.pause();
+            this.isCompleted = true;
+            this.state = VgStates.VG_ENDED;
         }
 
         this.ref.detectChanges();
@@ -514,7 +527,7 @@ export class VgMediaDirective implements OnInit, OnDestroy, PlayableModel {
 
     seekTime(value: number, byPercent: boolean = false): void {
         let second: number;
-        const duration: number = this.duration;
+        const duration = this.duration;
 
         if (byPercent) {
             second = value * duration / 100;
@@ -532,6 +545,26 @@ export class VgMediaDirective implements OnInit, OnDestroy, PlayableModel {
             newTrack.mode = mode;
         }
         return newTrack;
+    }
+
+    private setOffset(offset: OffsetModel): void {
+        if (this.duration < offset.end || offset.end < offset.start) {
+            offset.end = this.duration;
+        }
+
+        if (offset.start < 0) {
+            offset.start = 0;
+        }
+
+        this.offset = offset;
+
+        this.time.total = (offset.end - offset.start) * 1000;
+
+        if (offset.jumpToStart) {
+            this.seekTime(this.offset.start);
+        } else if (offset.jumpToEnd) {
+            this.seekTime(this.offset.end);
+        }
     }
 
     ngOnDestroy(): void {

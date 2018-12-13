@@ -45,7 +45,9 @@ export interface MediaElementModel {
     /**
      * Returns the duration in seconds of the current media resource.
      * A NaN value is returned if duration is not available, or Infinity if the media resource is streaming.
+     * Must be named differently, because duration is readonly (browser) and won't be update in livestream
      */
+    totalTime: number;
     readonly duration: number;
     /**
      * Gets information about whether the playback has ended or not.

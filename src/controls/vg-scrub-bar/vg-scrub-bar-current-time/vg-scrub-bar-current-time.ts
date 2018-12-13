@@ -70,7 +70,16 @@ export class VgScrubBarCurrentTimeComponent implements OnInit, OnDestroy {
         this.target = this.API.getMediaById(this.vgFor);
     }
 
+    isStreamLive(): boolean {
+        // tslint:disable-next-line:no-magic-numbers
+        return this.API.isLivestream && this.API.duration - this.API.currentTime <= this.API.segmentDuration + 5;
+    }
+
     getPercentage(): string {
+        if (this.isStreamLive()) {
+            return '100%';
+        }
+
         return this.target ? ((this.target.time.current * 100) / this.target.time.total) + '%' : '0%';
     }
 

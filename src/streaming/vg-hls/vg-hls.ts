@@ -13,6 +13,7 @@ import { VgAPI } from '../../core/services/vg-api';
 import { HLSConfigModel } from './hls-config';
 import { Subscription } from 'rxjs';
 import { BitrateOption } from '../../core/core';
+import { PlayableModel } from '../../core/vg-media/i-playable';
 
 declare let Hls;
 
@@ -26,7 +27,7 @@ export class VgHLSDirective implements OnInit, OnChanges, OnDestroy {
     @Output() onGetBitrates: EventEmitter<BitrateOption[]> = new EventEmitter();
 
     vgFor: string;
-    target: any;
+    target: PlayableModel;
     hls: any;
     preload: boolean;
     crossorigin: string;
@@ -48,10 +49,17 @@ export class VgHLSDirective implements OnInit, OnChanges, OnDestroy {
         this.crossorigin = this.ref.nativeElement.getAttribute('crossorigin');
         this.preload = this.ref.nativeElement.getAttribute('preload') !== 'none';
         this.vgFor = this.ref.nativeElement.getAttribute('vgFor');
-        this.target = this.API.getMediaById(this.vgFor);
+
+        if (this.vgFor) {
+            this.target = this.API.getMediaById(this.vgFor);
+        } else {
+            this.target = this.API.getDefaultMedia();
+        }
 
         this.config = <HLSConfigModel>{
-            autoStartLoad: this.preload
+            autoStartLoad: this.preload,
+            liveSyncDurationCount: 1,
+            startPosition: 0,
         };
 
         if (this.crossorigin === 'use-credentials') {
@@ -72,6 +80,19 @@ export class VgHLSDirective implements OnInit, OnChanges, OnDestroy {
                         }
                     }
                 )
+            );
+        }
+
+        if (this.hls) {
+            this.hls.on(
+                Hls.Events.LEVEL_LOADED,
+                (_, data) => {
+                    this.target.totalTime = data.details.totalduration;
+                    this.target.segmentDuration = data.details.targetduration;
+                    if (!this.target.offset) {
+                        this.target.isLivestream = data.details.live;
+                    }
+                }
             );
         }
     }
@@ -122,6 +143,7 @@ export class VgHLSDirective implements OnInit, OnChanges, OnDestroy {
                     this.onGetBitrates.emit(videoList);
                 }
             );
+
             this.hls.loadSource(this.vgHls);
             this.hls.attachMedia(video);
         } else {
