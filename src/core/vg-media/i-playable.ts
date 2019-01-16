@@ -12,8 +12,8 @@ export interface PlayableModel {
     isMetadataLoaded: boolean;
     isWaiting: boolean;
     isCompleted: boolean;
-    isLive: boolean;
     isLivestream: boolean;
+    followsLive: boolean;
     textTracks: TextTrackList;
     state: string;
     subscriptions: MediaSubscriptionsModel;

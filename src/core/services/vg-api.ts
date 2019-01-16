@@ -76,6 +76,26 @@ export class VgAPI {
         }
     }
 
+    jumpToLive(): boolean {
+        if (!this.isLivestream || this.followsLive) {
+            return false;
+        }
+
+        const media = this.getDefaultMedia();
+        this.seekTime(Number.MAX_SAFE_INTEGER);
+        setTimeout(
+            () => {
+                // Edge doesn't respect timeout so left time is not updated => it jump to start of video
+                media.time.left = 400;
+                this.play();
+            },
+            // tslint:disable-next-line:no-magic-numbers
+            250,
+        );
+
+        return true;
+    }
+
     get duration(): number {
         return this.$$getAllProperties('duration');
     }
@@ -98,6 +118,14 @@ export class VgAPI {
 
     get state(): string {
         return this.$$getAllProperties('state');
+    }
+
+    get muted(): boolean {
+        return this.$$getAllProperties('muted');
+    }
+
+    set muted(muted: boolean) {
+        this.$$setAllProperties('muted', muted);
     }
 
     set volume(volume: number) {
@@ -136,10 +164,6 @@ export class VgAPI {
         return this.$$getAllProperties('isCompleted');
     }
 
-    get isLive(): boolean {
-        return this.$$getAllProperties('isLive');
-    }
-
     get isLivestream(): boolean {
         return this.$$getAllProperties('isLivestream');
     }
@@ -170,6 +194,10 @@ export class VgAPI {
 
     get textTracks(): any {
         return this.$$getAllProperties('textTracks');
+    }
+
+    get followsLive(): boolean {
+        return this.$$getAllProperties('followsLive');
     }
 
     seekTime(value: number, byPercent: boolean = false): void {
@@ -262,7 +290,7 @@ export class VgAPI {
     $$setAllProperties(property: string, value: any): void {
         for (const id in this.medias) {
             if (this.medias[id]) {
-                this.medias[ id ][ property ] = value;
+                this.medias[id][property] = value;
             }
         }
     }

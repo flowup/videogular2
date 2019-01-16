@@ -1,3 +1,4 @@
+import { VgUtils } from './../../core/services/vg-utils';
 import { Component, Input, ElementRef, HostListener, OnInit, ViewEncapsulation, OnDestroy } from '@angular/core';
 import { VgAPI } from '../../core/services/vg-api';
 import { Subscription } from 'rxjs';
@@ -7,10 +8,10 @@ import { Subscription } from 'rxjs';
     encapsulation: ViewEncapsulation.None,
     template: `
         <div class="icon"
-             [class.vg-icon-volume_up]="getVolume() >= 0.75"
+             [class.vg-icon-volume_up]="getVolume() >= 0.75 && !muted()"
              [class.vg-icon-volume_down]="getVolume() >= 0.25 && getVolume() < 0.75"
              [class.vg-icon-volume_mute]="getVolume() > 0 && getVolume() < 0.25"
-             [class.vg-icon-volume_off]="getVolume() === 0"
+             [class.vg-icon-volume_off]="getVolume() === 0 || muted()"
              tabindex="0"
              role="button"
              aria-label="mute button"
@@ -40,7 +41,7 @@ import { Subscription } from 'rxjs';
 })
 export class VgMuteComponent implements OnInit, OnDestroy {
     @Input() vgFor: string;
-    elem: HTMLElement;
+    elem: HTMLVideoElement;
     target: any;
 
     currentVolume: number;
@@ -85,22 +86,39 @@ export class VgMuteComponent implements OnInit, OnDestroy {
     changeMuteState(): void {
         const volume = this.getVolume();
 
+        // iOS doesn't allow to change volume of media via HTML controls
+        if (this.target && VgUtils.isiOSDevice()) {
+            this.target.muted = !this.target.muted;
+            return;
+        }
+
         if (volume === 0) {
             if (this.target.volume === 0 && this.currentVolume === 0) {
                 this.currentVolume = 1;
             }
 
             this.target.volume = this.currentVolume;
+            if (this.target) {
+                this.target.muted = false;
+            }
         } else {
             this.currentVolume = volume;
             this.target.volume = 0;
+            if (this.target) {
+                this.target.muted = true;
+            }
         }
+
     }
 
     getVolume(): number {
         const volume = this.target ? this.target.volume : 0;
         this.ariaValue = volume ? 'unmuted' : 'muted';
         return volume;
+    }
+
+    muted(): boolean {
+        return this.target ? this.target.muted : false;
     }
 
     ngOnDestroy(): void {

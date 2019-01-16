@@ -1,3 +1,4 @@
+import { VgUtils } from './../services/vg-utils';
 import { ChangeDetectorRef, Directive, Input, OnDestroy, OnInit } from '@angular/core';
 import { PlayableModel, MediaSubscriptionsModel } from './i-playable';
 import { Observable, Subscription, Subject, fromEvent, timer, combineLatest } from 'rxjs';
@@ -56,7 +57,7 @@ export class VgMediaDirective implements OnInit, OnDestroy, PlayableModel {
     state: string = VgStates.VG_PAUSED;
 
     time: any = { current: 0, total: 0, left: 0 };
-    totalTime: number;
+    totalTime = 0;
     buffer: any = { end: 0 };
     track: any;
     subscriptions: MediaSubscriptionsModel;
@@ -66,8 +67,8 @@ export class VgMediaDirective implements OnInit, OnDestroy, PlayableModel {
     isMetadataLoaded = false;
     isWaiting = false;
     isCompleted = false;
-    isLive = false;
     isLivestream = false;
+    followsLive = false;
     segmentDuration = 10;
 
     isBufferDetected = false;
@@ -268,6 +269,7 @@ export class VgMediaDirective implements OnInit, OnDestroy, PlayableModel {
         setTimeout(() => this.vgMedia.load(), 10);
     }
 
+    // tslint:disable-next-line:cyclomatic-complexity
     play(): Promise<any> | undefined {
         // short-circuit if already playing
         if (this.playPromise || (this.state !== VgStates.VG_PAUSED && this.state !== VgStates.VG_ENDED)) {
@@ -319,7 +321,13 @@ export class VgMediaDirective implements OnInit, OnDestroy, PlayableModel {
     }
 
     get duration(): number {
-        return this.offset ? this.vgMedia.duration : this.totalTime || this.vgMedia.duration;
+        let duration = this.totalTime || this.vgMedia.duration;
+
+        if (duration === Infinity) {
+            duration = this.time.total / 1000;
+        }
+
+        return duration;
     }
 
     set currentTime(seconds: number) {
@@ -329,6 +337,14 @@ export class VgMediaDirective implements OnInit, OnDestroy, PlayableModel {
 
     get currentTime(): number {
         return this.vgMedia.currentTime;
+    }
+
+    get muted(): boolean {
+        return this.vgMedia.muted;
+    }
+
+    set muted(muted: boolean) {
+        this.vgMedia.muted = muted;
     }
 
     set volume(volume: number) {
@@ -372,9 +388,9 @@ export class VgMediaDirective implements OnInit, OnDestroy, PlayableModel {
     onLoadMetadata(): void {
         this.isMetadataLoaded = true;
 
-        let total = this.duration * 1000;
-        if (this.offset) {
-            total = (this.offset.end - this.offset.start) * 1000;
+        const total = this.duration * 1000;
+        if (this.duration === 0) {
+            this.isLivestream = true;
         }
 
         this.time = {
@@ -384,10 +400,9 @@ export class VgMediaDirective implements OnInit, OnDestroy, PlayableModel {
         };
 
         this.state = VgStates.VG_PAUSED;
-
-        // Live streaming check
-        const t: number = Math.round(this.time.total);
-        this.isLive = (t === Infinity);
+        if (VgUtils.isiOSDevice() && this.vgMedia.autoplay) {
+            this.play();
+        }
 
         this.ref.detectChanges();
     }
@@ -434,6 +449,7 @@ export class VgMediaDirective implements OnInit, OnDestroy, PlayableModel {
         this.ref.detectChanges();
     }
 
+    // tslint:disable-next-line:cyclomatic-complexity
     onTimeUpdate(): void {
         const end = this.buffered.length - 1;
 
@@ -444,7 +460,16 @@ export class VgMediaDirective implements OnInit, OnDestroy, PlayableModel {
             total = (this.offset.end - this.offset.start) * 1000;
         } else {
             current = this.currentTime * 1000;
-            total = this.duration * 1000;
+            if (this.isLivestream && VgUtils.isiOSDevice()) {
+                if (this.followsLive && this.currentTime > this.totalTime) {
+                    this.totalTime = this.currentTime + this.segmentDuration;
+                } else {
+                    this.totalTime = (this.time.total + this.checkInterval) / 1000;
+                }
+                total = this.totalTime * 1000;
+            } else {
+                total = this.duration * 1000;
+            }
         }
         const left = total - current;
 
@@ -463,6 +488,9 @@ export class VgMediaDirective implements OnInit, OnDestroy, PlayableModel {
             this.isCompleted = true;
             this.state = VgStates.VG_ENDED;
         }
+
+        // tslint:disable-next-line:no-magic-numbers
+        this.followsLive = this.api.isLivestream && !this.api.offset && left <= (this.segmentDuration + 5) * 1000;
 
         this.ref.detectChanges();
     }

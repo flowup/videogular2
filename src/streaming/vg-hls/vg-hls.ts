@@ -23,6 +23,7 @@ declare let Hls;
 })
 export class VgHLSDirective implements OnInit, OnChanges, OnDestroy {
     @Input() vgHls: string;
+    @Input() vgHlsHeaders: {[key: string]: string} = {};
 
     @Output() onGetBitrates: EventEmitter<BitrateOption[]> = new EventEmitter();
 
@@ -59,15 +60,17 @@ export class VgHLSDirective implements OnInit, OnChanges, OnDestroy {
         this.config = <HLSConfigModel>{
             autoStartLoad: this.preload,
             liveSyncDurationCount: 1,
-            startPosition: 0,
         };
 
-        if (this.crossorigin === 'use-credentials') {
-            this.config.xhrSetup = (xhr) => {
-                // Send cookies
+        this.config.xhrSetup = (xhr, url) => {
+            // Send cookies
+            if (this.crossorigin === 'use-credentials') {
                 xhr.withCredentials = true;
-            };
-        }
+            }
+            for (const key of Object.keys(this.vgHlsHeaders)) {
+                xhr.setRequestHeader(key, this.vgHlsHeaders[key]);
+            }
+        };
 
         this.createPlayer();
 
@@ -100,6 +103,8 @@ export class VgHLSDirective implements OnInit, OnChanges, OnDestroy {
     ngOnChanges(changes: SimpleChanges): void {
         if (changes['vgHls'] && changes['vgHls'].currentValue) {
             this.createPlayer();
+        } else if (changes['vgHlsHeaders'] && changes['vgHlsHeaders'].currentValue) {
+            // Do nothing. We don't want to create a or destroy a player if the headers change.
         } else {
             this.destroyPlayer();
         }
@@ -110,47 +115,50 @@ export class VgHLSDirective implements OnInit, OnChanges, OnDestroy {
             this.destroyPlayer();
         }
 
+        const video: HTMLVideoElement = this.ref.nativeElement;
         // It's a HLS source
-        if (this.vgHls && this.vgHls.indexOf('m3u8') > -1 && Hls.isSupported()) {
-            const video: HTMLVideoElement = this.ref.nativeElement;
+        if (this.vgHls && this.vgHls.indexOf('m3u8') > -1 && this.API.isPlayerReady) {
+            if (Hls.isSupported()) {
+                this.hls = new Hls(this.config);
+                this.hls.on(
+                    Hls.Events.MANIFEST_PARSED,
+                    (_, data) => {
+                        const videoList = [];
 
-            this.hls = new Hls(this.config);
-            this.hls.on(
-                Hls.Events.MANIFEST_PARSED,
-                (_, data) => {
-                    const videoList = [];
-
-                    videoList.push({
-                        qualityIndex: 0,
-                        width: 0,
-                        height: 0,
-                        bitrate: 0,
-                        mediaType: 'video',
-                        label: 'AUTO'
-                    });
-
-                    data.levels.forEach((item, index) => {
                         videoList.push({
-                            qualityIndex: ++index,
-                            width: item.width,
-                            height: item.height,
-                            bitrate: item.bitrate,
+                            qualityIndex: 0,
+                            width: 0,
+                            height: 0,
+                            bitrate: 0,
                             mediaType: 'video',
-                            label: item.name
+                            label: 'AUTO'
                         });
-                    });
 
-                    this.onGetBitrates.emit(videoList);
-                }
-            );
+                        data.levels.forEach((item, index) => {
+                            videoList.push({
+                                qualityIndex: ++index,
+                                width: item.width,
+                                height: item.height,
+                                bitrate: item.bitrate,
+                                mediaType: 'video',
+                                label: item.name
+                            });
+                        });
 
-            this.hls.loadSource(this.vgHls);
-            this.hls.attachMedia(video);
+                        this.onGetBitrates.emit(videoList);
+                    }
+                );
+
+                this.hls.loadSource(this.vgHls);
+                this.hls.attachMedia(video);
+            } else if (video.canPlayType('application/vnd.apple.mpegurl')) {
+                video.src = this.vgHls;
+            }
         } else {
             if (this.target && !!this.target.pause) {
                 this.target.pause();
                 this.target.seekTime(0);
-                this.ref.nativeElement.src = this.vgHls;
+                video.src = this.vgHls;
             }
         }
     }

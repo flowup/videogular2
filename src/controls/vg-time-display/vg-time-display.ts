@@ -1,4 +1,3 @@
-import { OffsetModel } from './../../core/vg-media/offset.model';
 import { Component, Input, ElementRef, OnInit, PipeTransform, Pipe, ViewEncapsulation, OnDestroy } from '@angular/core';
 import { VgAPI } from '../../core/services/vg-api';
 import { Subscription } from 'rxjs';
@@ -56,16 +55,15 @@ export class VgUtcPipe implements PipeTransform {
     selector: 'vg-time-display',
     encapsulation: ViewEncapsulation.None,
     template: `
-        <span *ngIf="target?.isLive">LIVE</span>
         <div
-            *ngIf="target?.isLivestream && vgProperty !== 'current' && !vgOffset"
-            (click)="followLive()"
+            *ngIf="target?.isLivestream && vgProperty !== 'current' && !API.offset"
+            (click)="API.jumpToLive()"
             class="time-display--follow-live-btn"
         >
             <span>LIVE</span>
-            <span [class.dot]="isStreamLive()"></span>
+            <span [class.livestream-dot]="API.followsLive"></span>
         </div>
-        <span *ngIf="!target?.isLive && !(target?.isLivestream && vgProperty !== 'current' && !vgOffset)">
+        <span *ngIf="!(target?.isLivestream && vgProperty !== 'current' && !API.offset)">
             {{ getTime() | vgUtc:vgFormat }}
         </span>
         <ng-content></ng-content>
@@ -88,7 +86,7 @@ export class VgUtcPipe implements PipeTransform {
             font-family: Helvetica Neue, Helvetica, Arial, sans-serif;
         }
 
-        .dot {
+        .livestream-dot {
             height: 40%;
             width: 20%;
             border-radius: 100%;
@@ -111,7 +109,6 @@ export class VgTimeDisplayComponent implements OnInit, OnDestroy {
     @Input() vgFor: string;
     @Input() vgProperty = 'current';
     @Input() vgFormat = 'mm:ss';
-    @Input() vgOffset: OffsetModel;
 
     elem: HTMLElement;
     target: any;
@@ -130,23 +127,6 @@ export class VgTimeDisplayComponent implements OnInit, OnDestroy {
         }
     }
 
-    isStreamLive(): boolean {
-        // tslint:disable-next-line:no-magic-numbers
-        return this.API.duration - this.API.currentTime <= this.API.segmentDuration + 5;
-    }
-
-    followLive(): void {
-        if (this.isStreamLive()) {
-            return;
-        }
-
-        this.API.currentTime = this.API.duration;
-        this.API.play();
-        if (this.target) {
-            this.target.followLive = true;
-        }
-    }
-
     onPlayerReady(): void {
         if (this.vgFor) {
             this.target = this.API.getMediaById(this.vgFor);
@@ -160,7 +140,7 @@ export class VgTimeDisplayComponent implements OnInit, OnDestroy {
 
         if (this.target) {
             t = Math.round(this.target.time[ this.vgProperty ]);
-            t = isNaN(t) || this.target.isLive ? 0 : t;
+            t = isNaN(t) ? 0 : t;
         }
 
         return t;

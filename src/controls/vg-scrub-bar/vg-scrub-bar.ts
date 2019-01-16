@@ -162,12 +162,10 @@ export class VgScrubBarComponent implements OnInit, OnDestroy {
     @HostListener('mousedown', [ '$event' ])
     onMouseDownScrubBar($event: any): void {
         if (this.target) {
-            if (!this.target.isLive) {
-                if (!this.vgSlider) {
-                    this.seekEnd($event.offsetX);
-                } else {
-                    this.seekStart();
-                }
+            if (!this.vgSlider) {
+                this.seekEnd($event.offsetX);
+            } else {
+                this.seekStart();
             }
         }
     }
@@ -175,7 +173,7 @@ export class VgScrubBarComponent implements OnInit, OnDestroy {
     @HostListener('document:mousemove', [ '$event' ])
     onMouseMoveScrubBar($event: any): void {
         if (this.target) {
-            if (!this.target.isLive && this.vgSlider && this.isSeeking) {
+            if (this.vgSlider && this.isSeeking) {
                 this.seekMove($event.offsetX);
             }
         }
@@ -184,7 +182,7 @@ export class VgScrubBarComponent implements OnInit, OnDestroy {
     @HostListener('document:mouseup', [ '$event' ])
     onMouseUpScrubBar($event: any): void {
         if (this.target) {
-            if (!this.target.isLive && this.vgSlider && this.isSeeking) {
+            if (this.vgSlider && this.isSeeking) {
                 this.seekEnd($event.offsetX);
             }
         }
@@ -193,12 +191,10 @@ export class VgScrubBarComponent implements OnInit, OnDestroy {
     @HostListener('touchstart', [ '$event' ])
     onTouchStartScrubBar($event: any): void {
         if (this.target) {
-            if (!this.target.isLive) {
-                if (!this.vgSlider) {
-                    this.seekEnd(this.getTouchOffset($event));
-                } else {
-                    this.seekStart();
-                }
+            if (!this.vgSlider) {
+                this.seekEnd(this.getTouchOffset($event));
+            } else {
+                this.seekStart();
             }
         }
     }
@@ -206,7 +202,7 @@ export class VgScrubBarComponent implements OnInit, OnDestroy {
     @HostListener('document:touchmove', [ '$event' ])
     onTouchMoveScrubBar($event: any): void {
         if (this.target) {
-            if (!this.target.isLive && this.vgSlider && this.isSeeking) {
+            if (this.vgSlider && this.isSeeking) {
                 this.seekMove(this.getTouchOffset($event));
             }
         }
@@ -215,7 +211,7 @@ export class VgScrubBarComponent implements OnInit, OnDestroy {
     @HostListener('document:touchcancel', [ '$event' ])
     onTouchCancelScrubBar(): void {
         if (this.target) {
-            if (!this.target.isLive && this.vgSlider && this.isSeeking) {
+            if (this.vgSlider && this.isSeeking) {
                 this.touchEnd();
             }
         }
@@ -224,7 +220,7 @@ export class VgScrubBarComponent implements OnInit, OnDestroy {
     @HostListener('document:touchend', [ '$event' ])
     onTouchEndScrubBar(): void {
         if (this.target) {
-            if (!this.target.isLive && this.vgSlider && this.isSeeking) {
+            if (this.vgSlider && this.isSeeking) {
                 this.touchEnd();
             }
         }
