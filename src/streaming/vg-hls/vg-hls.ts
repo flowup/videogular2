@@ -62,7 +62,7 @@ export class VgHLSDirective implements OnInit, OnChanges, OnDestroy {
             liveSyncDurationCount: 1,
         };
 
-        this.config.xhrSetup = (xhr, url) => {
+        this.config.xhrSetup = (xhr) => {
             // Send cookies
             if (this.crossorigin === 'use-credentials') {
                 xhr.withCredentials = true;
@@ -117,8 +117,8 @@ export class VgHLSDirective implements OnInit, OnChanges, OnDestroy {
 
         const video: HTMLVideoElement = this.ref.nativeElement;
         // It's a HLS source
-        if (this.vgHls && this.vgHls.indexOf('m3u8') > -1 && this.API.isPlayerReady) {
-            if (Hls.isSupported()) {
+        if (this.vgHls && this.vgHls.indexOf('m3u8') > -1) {
+            if (Hls.isSupported() && this.API.isPlayerReady) {
                 this.hls = new Hls(this.config);
                 this.hls.on(
                     Hls.Events.MANIFEST_PARSED,

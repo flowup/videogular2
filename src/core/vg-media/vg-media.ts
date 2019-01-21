@@ -42,13 +42,6 @@ export class VgMediaDirective implements OnInit, OnDestroy, PlayableModel {
             },
             0
         );
-
-        // Disabled for now, not supported by all browsers and it changes src of video so it stops
-        // Maybe will be enabled later via config
-        // Must be in setTimeout otherwise coreSrc is undefined
-        // setTimeout(() => {
-        //     this.vgMedia.src = `${this.coreSrc}#t=${offset.start},${offset.end}`;
-        // }, 0);
     }
 
     offset: OffsetModel;
@@ -326,6 +319,9 @@ export class VgMediaDirective implements OnInit, OnDestroy, PlayableModel {
         if (duration === Infinity) {
             duration = this.time.total / 1000;
         }
+        if (duration < 0) {
+            duration = 0;
+        }
 
         return duration;
     }
@@ -400,7 +396,7 @@ export class VgMediaDirective implements OnInit, OnDestroy, PlayableModel {
         };
 
         this.state = VgStates.VG_PAUSED;
-        if (VgUtils.isiOSDevice() && this.vgMedia.autoplay) {
+        if (VgUtils.isiOSDevice() && this.elem && this.elem.autoplay) {
             this.play();
         }
 
@@ -576,7 +572,7 @@ export class VgMediaDirective implements OnInit, OnDestroy, PlayableModel {
     }
 
     private setOffset(offset: OffsetModel): void {
-        if (this.duration < offset.end || offset.end < offset.start) {
+        if (this.duration > 0 && this.duration < offset.end) {
             offset.end = this.duration;
         }
 

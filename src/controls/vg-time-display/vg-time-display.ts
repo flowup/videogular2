@@ -6,6 +6,11 @@ import { Subscription } from 'rxjs';
 @Pipe({ name: 'vgUtc' })
 export class VgUtcPipe implements PipeTransform {
     transform(value: number, format: string): string {
+        if (value < 0) {
+            console.error('Time shouldn\'t be negative number.');
+            value = 0;
+        }
+
         const date = new Date(value);
         let result = format;
         let ss: string|number = date.getUTCSeconds();
