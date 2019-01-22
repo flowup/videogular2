@@ -576,7 +576,7 @@ export class VgMediaDirective implements OnInit, OnDestroy, PlayableModel {
             offset.end = this.duration;
         }
 
-        if (offset.start < 0) {
+        if (offset.start < 0 || offset.start > offset.end) {
             offset.start = 0;
         }
 
