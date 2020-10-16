@@ -20,7 +20,7 @@ import { Subscription } from 'rxjs';
         vg-buffering.is-buffering {
             display: block;
         }
-
+        
         .vg-buffering {
             position: absolute;
             display: block;

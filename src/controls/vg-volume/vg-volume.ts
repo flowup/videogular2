@@ -1,14 +1,20 @@
 import {
-    Component, Input, ElementRef, HostListener, OnInit, ViewEncapsulation, ViewChild,
-    OnDestroy
+  Component,
+  Input,
+  ElementRef,
+  HostListener,
+  OnInit,
+  ViewEncapsulation,
+  ViewChild,
+  OnDestroy
 } from '@angular/core';
 import { VgAPI } from '../../core/services/vg-api';
 import { Subscription } from 'rxjs';
 
 @Component({
-    selector: 'vg-volume',
-    encapsulation: ViewEncapsulation.None,
-    template: `
+  selector: 'vg-volume',
+  encapsulation: ViewEncapsulation.None,
+  template: `
         <div
             #volumeBar
             class="volumeBar"
@@ -29,7 +35,8 @@ import { Subscription } from 'rxjs';
             </div>
         </div>
     `,
-    styles: [ `
+  styles: [
+    `
         vg-volume {
             -webkit-touch-callout: none;
             -webkit-user-select: none;
@@ -78,63 +85,67 @@ import { Subscription } from 'rxjs';
         vg-volume .volumeBackground.dragging .volumeKnob {
             transition: none;
         }
-    ` ]
+    `
+  ]
 })
-export class VgVolumeComponent implements OnInit, OnDestroy {
-    @Input() vgFor: string;
-    @ViewChild('volumeBar') volumeBarRef: ElementRef;
+export class VgVolume implements OnInit, OnDestroy {
+  @Input() vgFor: string;
+  @ViewChild('volumeBar', { static: true })
+  volumeBarRef: ElementRef;
 
-    elem: HTMLElement;
-    target: any;
-    isDragging: boolean;
-    mouseDownPosX: number;
-    ariaValue: number;
+  elem: HTMLElement;
+  target: any;
+  isDragging: boolean;
+  mouseDownPosX: number;
+  ariaValue: number;
 
-    subscriptions: Subscription[] = [];
+  subscriptions: Subscription[] = [];
 
-    constructor(ref: ElementRef, public API: VgAPI) {
-        this.elem = ref.nativeElement;
-        this.isDragging = false;
+  constructor(ref: ElementRef, public API: VgAPI) {
+    this.elem = ref.nativeElement;
+    this.isDragging = false;
+  }
+
+  ngOnInit() {
+    if (this.API.isPlayerReady) {
+      this.onPlayerReady();
+    } else {
+      this.subscriptions.push(
+        this.API.playerReadyEvent.subscribe(() => this.onPlayerReady())
+      );
     }
+  }
 
-    ngOnInit(): void {
-        if (this.API.isPlayerReady) {
-            this.onPlayerReady();
-        } else {
-            this.subscriptions.push(this.API.playerReadyEvent.subscribe(() => this.onPlayerReady()));
-        }
+  onPlayerReady(): void {
+    this.target = this.API.getMediaById(this.vgFor);
+    this.ariaValue = this.getVolume() * 100;
+  }
+
+  onClick(event: { clientX: number }): void {
+    this.setVolume(this.calculateVolume(event.clientX));
+  }
+
+  onMouseDown(event: { clientX: number }): void {
+    this.mouseDownPosX = event.clientX;
+    this.isDragging = true;
+  }
+
+  @HostListener('document:mousemove', [ '$event' ])
+  onDrag(event: { clientX: number }): void {
+    if (this.isDragging) {
+      this.setVolume(this.calculateVolume(event.clientX));
     }
+  }
 
-    onPlayerReady(): void {
-        this.target = this.API.getMediaById(this.vgFor);
-        this.ariaValue = this.getVolume() * 100;
-    }
-
-    onClick(event: { clientX: number }): void {
+  @HostListener('document:mouseup', [ '$event' ])
+  onStopDrag(event: { clientX: number }): void {
+    if (this.isDragging) {
+      this.isDragging = false;
+      if (this.mouseDownPosX === event.clientX) {
         this.setVolume(this.calculateVolume(event.clientX));
+      }
     }
-
-    onMouseDown(event: { clientX: number }): void {
-        this.mouseDownPosX = event.clientX;
-        this.isDragging = true;
-    }
-
-    @HostListener('document:mousemove', [ '$event' ])
-    onDrag(event: { clientX: number }): void {
-        if (this.isDragging) {
-            this.setVolume(this.calculateVolume(event.clientX));
-        }
-    }
-
-    @HostListener('document:mouseup', [ '$event' ])
-    onStopDrag(event: { clientX: number }): void {
-        if (this.isDragging) {
-            this.isDragging = false;
-            if (this.mouseDownPosX === event.clientX) {
-                this.setVolume(this.calculateVolume(event.clientX));
-            }
-        }
-    }
+  }
 
     @HostListener('keydown', ['$event'])
     arrowAdjustVolume(event: KeyboardEvent): void {
@@ -142,32 +153,32 @@ export class VgVolumeComponent implements OnInit, OnDestroy {
         /* tslint:disable-next-line:no-magic-numbers */
         if (event.keyCode === 38 || event.keyCode === 39) {
             event.preventDefault();
-            this.setVolume(Math.max(0, Math.min(100, (this.getVolume() * 100) + 10)));
-        // TODO: Remove keycode
+            this.setVolume(Math.max(0, Math.min(100, this.getVolume() * 100 + 10)));
+    // TODO: Remove keycode
         /* tslint:disable-next-line:no-magic-numbers */
         } else if (event.keyCode === 37 || event.keyCode === 40) {
             event.preventDefault();
-            this.setVolume(Math.max(0, Math.min(100, (this.getVolume() * 100) - 10)));
-        }
+            this.setVolume(Math.max(0, Math.min(100, this.getVolume() * 100 - 10)));
     }
+  }
 
-    calculateVolume(mousePosX: number): number {
-        const recObj = this.volumeBarRef.nativeElement.getBoundingClientRect();
-        const volumeBarOffsetLeft: number = recObj.left;
-        const volumeBarWidth: number = recObj.width;
-        return (mousePosX - volumeBarOffsetLeft) / volumeBarWidth * 100;
-    }
+  calculateVolume(mousePosX: number): number {
+    const recObj = this.volumeBarRef.nativeElement.getBoundingClientRect();
+    const volumeBarOffsetLeft: number = recObj.left;
+    const volumeBarWidth: number = recObj.width;
+    return (mousePosX - volumeBarOffsetLeft) / volumeBarWidth * 100;
+  }
 
-    setVolume(vol: number): void {
-        this.target.volume = Math.max(0, Math.min(1, vol / 100));
-        this.ariaValue = this.target.volume * 100;
-    }
+  setVolume(vol: number): void {
+    this.target.volume = Math.max(0, Math.min(1, vol / 100));
+    this.ariaValue = this.target.volume * 100;
+  }
 
-    getVolume(): number {
-        return this.target ? this.target.volume : 0;
-    }
+  getVolume(): number {
+    return this.target ? this.target.volume : 0;
+  }
 
-    ngOnDestroy(): void {
-        this.subscriptions.forEach(s => s.unsubscribe());
-    }
+  ngOnDestroy(): void {
+    this.subscriptions.forEach((s) => s.unsubscribe());
+  }
 }

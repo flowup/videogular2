@@ -1,54 +1,53 @@
-/* tslint:disable:no-magic-numbers */
-import { VgScrubBarComponent } from './vg-scrub-bar';
-import { VgAPI } from '../../core/services/vg-api';
-import { ChangeDetectorRef, ElementRef } from '@angular/core';
-import { VgControlsHidden } from './../../core/services/vg-controls-hidden';
-import { VgMediaDirective } from '../../core/vg-media/vg-media';
+import {VgScrubBar} from "./vg-scrub-bar";
+import {VgAPI} from "../../core/services/vg-api";
+import {ChangeDetectorRef, ElementRef} from "@angular/core";
+import {VgControlsHidden} from './../../core/services/vg-controls-hidden';
+import {VgMedia} from "../../core/vg-media/vg-media";
 import { VgStates } from '../../core/states/vg-states';
-import { MediaElementModel } from '../../core/vg-media/i-media-element';
+import { VgMediaElement } from '../../core/vg-media/vg-media-element';
 
 describe('Scrub bar', () => {
-    let scrubBar: VgScrubBarComponent;
-    let ref: ElementRef;
-    let cdRef: ChangeDetectorRef;
-    let api: VgAPI;
+    let scrubBar:VgScrubBar;
+    let ref:ElementRef;
+    let cdRef:ChangeDetectorRef;
+    let api:VgAPI;
     let vgControlsHiddenState: VgControlsHidden;
-    let media: VgMediaDirective;
-    const elem: Partial<MediaElementModel> = {
-        duration: 100,
-        currentTime: 0,
-        volume: 1,
-        playbackRate: 1,
-        buffered: {
-            length: 2,
-            start: () => 0,
-            end: () => 50
-        },
-        id: 'testVideo',
+    let media:VgMedia;
+    let elem = new VgMediaElement();
+    elem.duration = 100;
+    elem.currentTime = 0;
+    elem.volume = 1;
+    elem.playbackRate = 1;
+    elem.buffered = {
+        length: 2,
+        start: () => {return 0;},
+        end: () => {return 50;}
     };
+    elem.id = 'testVideo';
 
     beforeEach(() => {
         ref = {
             nativeElement: {
-                getAttribute: (name) =>
-                    name,
+                getAttribute: (name) => {
+                    return name;
+                },
                 scrollWidth: 200
             }
         };
         cdRef = {
-            detectChanges: () => undefined,
-            markForCheck: () => undefined,
-            detach: () => undefined,
-            reattach: () => undefined,
-            checkNoChanges: () => undefined
+            detectChanges: () => {},
+            markForCheck: () => {},
+            detach: () => {},
+            reattach: () => {},
+            checkNoChanges: () => {}
         };
 
         api = new VgAPI();
-        media = new VgMediaDirective(api, cdRef);
-        media.vgMedia = (elem as any);
+        media = new VgMedia(api, cdRef);
+        media.vgMedia = elem;
         vgControlsHiddenState = new VgControlsHidden();
 
-        scrubBar = new VgScrubBarComponent(ref, api, vgControlsHiddenState);
+        scrubBar = new VgScrubBar(ref, api, vgControlsHiddenState);
     });
 
     it('Should get media by id on init', () => {
@@ -73,9 +72,9 @@ describe('Scrub bar', () => {
     describe('onMouseDownScrubBar', () => {
         it('should call API seekTime 10 when offsetX is 20 and scrollWidth is 200', () => {
             api = <any>{
-                seekTime: () => undefined,
-                pause: () => undefined,
-                registerMedia: () => undefined,
+                seekTime: () => {},
+                pause: () => {},
+                registerMedia: () => {},
                 state: VgStates.VG_PLAYING,
                 isLive: false,
                 canPlay: true
@@ -83,7 +82,7 @@ describe('Scrub bar', () => {
 
             spyOn(api, 'pause');
 
-            media.onCanPlay();
+            media.onCanPlay({});
             api.registerMedia(media);
 
             scrubBar.target = api;
@@ -121,7 +120,7 @@ describe('Scrub bar', () => {
         it('should modify time.current to 10 when offsetX is 20 and scrollWidth is 200 and vgSlider is true and isSeeking is true', () => {
             spyOn(api, 'seekTime');
 
-            media.onCanPlay();
+            media.onCanPlay({});
             api.registerMedia(media);
 
             scrubBar.target = api;
@@ -145,7 +144,7 @@ describe('Scrub bar', () => {
             spyOn(api, 'seekTime');
             spyOn(api, 'pause');
 
-            media.onCanPlay();
+            media.onCanPlay({});
             api.registerMedia(media);
 
             scrubBar.target = api;
@@ -193,14 +192,14 @@ describe('Scrub bar', () => {
             scrubBar.target = api;
             scrubBar.vgSlider = false;
 
-            scrubBar.onTouchCancelScrubBar();
+            scrubBar.onTouchCancelScrubBar({ touches: [ {pageX: 20 }]});
 
             expect(api.seekTime).toHaveBeenCalledTimes(0);
 
             scrubBar.vgSlider = true;
             scrubBar.isSeeking = true;
 
-            scrubBar.onTouchCancelScrubBar();
+            scrubBar.onTouchCancelScrubBar({ touches: [ {pageX: 20 }]});
 
             expect(api.seekTime).toHaveBeenCalledTimes(0);
         });
@@ -213,14 +212,14 @@ describe('Scrub bar', () => {
             scrubBar.target = api;
             scrubBar.vgSlider = false;
 
-            scrubBar.onTouchEndScrubBar();
+            scrubBar.onTouchEndScrubBar({ touches: [ {pageX: 20 }]});
 
             expect(api.seekTime).toHaveBeenCalledTimes(0);
 
             scrubBar.vgSlider = true;
             scrubBar.isSeeking = true;
 
-            scrubBar.onTouchEndScrubBar();
+            scrubBar.onTouchEndScrubBar({ touches: [ {pageX: 20 }]});
 
             expect(api.seekTime).toHaveBeenCalledTimes(0);
         });

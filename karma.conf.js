@@ -7,21 +7,12 @@ module.exports = function(config) {
         files: [
             // Polyfills.
             'node_modules/core-js/client/shim.min.js',
-
-            'node_modules/reflect-metadata/Reflect.js',
-
             // System.js for module loading
             'node_modules/systemjs/dist/system.src.js',
-            'node_modules/systemjs/dist/system-polyfills.js',
 
             // Zone.js dependencies
             'node_modules/zone.js/dist/zone.js',
-            'node_modules/zone.js/dist/long-stack-trace-zone.js',
-            'node_modules/zone.js/dist/proxy.js',
-            'node_modules/zone.js/dist/sync-test.js',
-            'node_modules/zone.js/dist/jasmine-patch.js',
-            'node_modules/zone.js/dist/async-test.js',
-            'node_modules/zone.js/dist/fake-async-test.js',
+            'node_modules/zone.js/dist/zone-testing.js',
 
             // RxJs.
             { pattern: 'node_modules/rxjs/**/*.js', included: false, watched: false },
@@ -35,8 +26,9 @@ module.exports = function(config) {
 
             {pattern: 'karma-test-shim.js', included: true, watched: true},
 
+
             // Our built application code
-            {pattern: 'src/**/*.js', included: false, watched: true},
+            {pattern: 'compiled/**/*.js', included: false, watched: true},
 
             // paths loaded via Angular's component compiler
             // (these paths need to be rewritten, see proxies section)
@@ -61,13 +53,20 @@ module.exports = function(config) {
 
         autoWatch: true,
 
-        browsers: ['ChromeHeadless'],
+        browsers: ['FirefoxHeadless'],
+        customLaunchers: {
+            FirefoxHeadless: {
+                base: 'Firefox',
+                flags: [ '-headless' ],
+            },
+        },
 
         // Karma plugins loaded
         plugins: [
             'karma-jasmine',
             'karma-coverage',
             'karma-chrome-launcher',
+            'karma-firefox-launcher',
             'karma-spec-reporter'
         ],
 

@@ -6,10 +6,10 @@ import { Observable ,  Subscription, fromEvent } from 'rxjs';
     selector: '[vgCuePoints]'
 })
 export class VgCuePointsDirective implements OnInit, OnDestroy, DoCheck {
-    @Output('onEnterCuePoint') onEnterCuePoint: EventEmitter<any> = new EventEmitter();
-    @Output('onUpdateCuePoint') onUpdateCuePoint: EventEmitter<any> = new EventEmitter();
-    @Output('onExitCuePoint') onExitCuePoint: EventEmitter<any> = new EventEmitter();
-    @Output('onCompleteCuePoint') onCompleteCuePoint: EventEmitter<any> = new EventEmitter();
+    @Output() onEnterCuePoint: EventEmitter<any> = new EventEmitter();
+    @Output() onUpdateCuePoint: EventEmitter<any> = new EventEmitter();
+    @Output() onExitCuePoint: EventEmitter<any> = new EventEmitter();
+    @Output() onCompleteCuePoint: EventEmitter<any> = new EventEmitter();
 
     subscriptions: Subscription[] = [];
     cuesSubscriptions: Subscription[] = [];
@@ -57,7 +57,8 @@ export class VgCuePointsDirective implements OnInit, OnDestroy, DoCheck {
     }
 
     ngDoCheck(): void {
-        if (this.ref.nativeElement.cues) {
+
+        if (this.ref.nativeElement.track && this.ref.nativeElement.track.cues) {
             const changes = this.totalCues !== this.ref.nativeElement.track.cues.length;
 
             if (changes) {

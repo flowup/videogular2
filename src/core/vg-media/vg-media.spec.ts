@@ -1,49 +1,43 @@
-/* tslint:disable:no-magic-numbers */
-import { MediaElementModel } from './i-media-element';
-import { VgMediaDirective } from './vg-media';
-import { VgAPI } from '../services/vg-api';
-import { ChangeDetectorRef } from '@angular/core';
-import { VgStates } from '../states/vg-states';
+import { VgMedia } from "./vg-media";
+import { VgAPI } from "../services/vg-api";
+import { ChangeDetectorRef } from "@angular/core";
+import { VgStates } from "../states/vg-states";
+import { VgMediaElement } from './vg-media-element';
 import { fakeAsync, tick } from '@angular/core/testing';
 
+
 describe('Videogular Media', () => {
-    let media: VgMediaDirective;
-    // let ref: ElementRef;
-    let cdRef: ChangeDetectorRef;
-    let api: VgAPI;
-    const elem: Partial<MediaElementModel> = {
-        duration: 100,
-        currentTime: 0,
-        volume: 1,
-        playbackRate: 1,
-        buffered: {
-            length: 2,
-            start: () => 0,
-            end: () => 50
-        },
-        id: 'testVideo',
-        play: () => new Promise(() => undefined),
-        pause: () => undefined,
-        load: () => undefined,
+    let media:VgMedia;
+    let cdRef:ChangeDetectorRef;
+    let api:VgAPI;
+    let elem = new VgMediaElement();
+    elem.duration = 100;
+    elem.currentTime = 0;
+    elem.volume = 1;
+    elem.playbackRate = 1;
+    elem.buffered = {
+        length: 2,
+        start: () => {return 0;},
+        end: () => {return 50;}
     };
+    elem.id = 'testVideo';
 
     beforeEach(() => {
-        // ref = {
-        //     nativeElement: elem
-        // };
+
         cdRef = {
-            detectChanges: () => undefined,
-            markForCheck: () => undefined,
-            detach: () => undefined,
-            reattach: () => undefined,
-            checkNoChanges: () => undefined
+            detectChanges: () => {},
+            markForCheck: () => {},
+            detach: () => {},
+            reattach: () => {},
+            checkNoChanges: () => {}
         };
         api = new VgAPI();
-        media = new VgMediaDirective(api, cdRef);
-        media.vgMedia = (elem as any);
+        media = new VgMedia(api, cdRef);
+        media.vgMedia = elem;
+        elem.currentTime = 0;
     });
 
-    it('Should load a new media if a change on dom have been happened', fakeAsync(() => {
+    it('Should load a new media if a change on dom have been happened', <any>fakeAsync((): void => {
         spyOn(elem, 'load').and.callThrough();
         spyOn(elem, 'pause').and.callThrough();
 
@@ -85,6 +79,7 @@ describe('Videogular Media', () => {
     });
 
     it('Should have setter/getter props', () => {
+        expect(media.duration).toBe(100);
         expect(media.currentTime).toBe(0);
         expect(media.volume).toBe(1);
         expect(media.playbackRate).toBe(1);
@@ -102,7 +97,7 @@ describe('Videogular Media', () => {
     it('Should handle onCanPlay native event', () => {
         expect(media.canPlay).toBeFalsy();
 
-        media.onCanPlay();
+        media.onCanPlay({});
 
         expect(media.canPlay).toBeTruthy();
     });
@@ -110,7 +105,7 @@ describe('Videogular Media', () => {
     it('Should handle onCanPlayThrough native event', () => {
         expect(media.canPlayThrough).toBeFalsy();
 
-        media.onCanPlayThrough();
+        media.onCanPlayThrough({});
 
         expect(media.canPlayThrough).toBeTruthy();
     });
@@ -118,7 +113,7 @@ describe('Videogular Media', () => {
     it('Should handle onLoadMetadata native event', () => {
         expect(media.isMetadataLoaded).toBeFalsy();
 
-        media.onLoadMetadata();
+        media.onLoadMetadata({});
 
         expect(media.isMetadataLoaded).toBeTruthy();
         expect(media.time.total).toBe(100000);
@@ -127,7 +122,7 @@ describe('Videogular Media', () => {
     it('Should handle onWait native event', () => {
         expect(media.isWaiting).toBeFalsy();
 
-        media.onWait();
+        media.onWait({});
 
         expect(media.isWaiting).toBeTruthy();
     });
@@ -136,7 +131,7 @@ describe('Videogular Media', () => {
         expect(media.isCompleted).toBeFalsy();
 
         media.state = VgStates.VG_PLAYING;
-        media.onComplete();
+        media.onComplete({});
 
         expect(media.isCompleted).toBeTruthy();
         expect(media.state).toBe(VgStates.VG_ENDED);
@@ -145,7 +140,7 @@ describe('Videogular Media', () => {
     it('Should handle onStartPlaying native event', () => {
         expect(media.state).toBe(VgStates.VG_PAUSED);
 
-        media.onStartPlaying();
+        media.onStartPlaying({});
 
         expect(media.state).toBe(VgStates.VG_PLAYING);
     });
@@ -153,7 +148,7 @@ describe('Videogular Media', () => {
     it('Should handle onPlay native event', () => {
         expect(media.state).toBe(VgStates.VG_PAUSED);
 
-        media.onPlay();
+        media.onPlay({});
 
         expect(media.state).toBe(VgStates.VG_PLAYING);
     });
@@ -161,7 +156,7 @@ describe('Videogular Media', () => {
     it('Should handle onPause native event', () => {
         media.state = VgStates.VG_PLAYING;
 
-        media.onPause();
+        media.onPause({});
 
         expect(media.state).toBe(VgStates.VG_PAUSED);
     });
@@ -169,7 +164,7 @@ describe('Videogular Media', () => {
     it('Should handle onTimeUpdate native event (with buffer)', () => {
         elem.currentTime = 25;
 
-        media.onTimeUpdate();
+        media.onTimeUpdate({});
 
         expect(media.time.current).toBe(25000);
         expect(media.time.left).toBe(75000);
@@ -178,46 +173,46 @@ describe('Videogular Media', () => {
 
     it('Should handle onTimeUpdate native event (without buffer)', () => {
         elem.currentTime = 25;
-        (elem as any).buffered = {
+        elem.buffered = {
             length: 0,
-            start: () => 0,
-            end: () => 0
+            start: () => {return 0;},
+            end: () => {return 0;}
         };
 
-        media.onTimeUpdate();
+        media.onTimeUpdate({});
 
         expect(media.time.current).toBe(25000);
         expect(media.time.left).toBe(75000);
         expect(media.buffer.end).toBe(0);
 
-        (elem as any).buffered = {
+        elem.buffered = {
             length: 2,
-            start: () => 0,
-            end: () => 50
+            start: () => {return 0;},
+            end: () => {return 50;}
         };
     });
 
     it('Should handle onProgress native event (with buffer)', () => {
-        media.onProgress();
+        media.onProgress({});
 
         expect(media.buffer.end).toBe(50000);
     });
 
     it('Should handle onProgress native event (without buffer)', () => {
-        (elem as any).buffered = {
+        elem.buffered = {
             length: 0,
-            start: () => 0,
-            end: () => 0
+            start: () => {return 0;},
+            end: () => {return 0;}
         };
 
-        media.onProgress();
+        media.onProgress({});
 
         expect(media.buffer.end).toBe(0);
 
-        (elem as any).buffered = {
+        elem.buffered = {
             length: 2,
-            start: () => 0,
-            end: () => 50
+            start: () => {return 0;},
+            end: () => {return 50;}
         };
     });
 });

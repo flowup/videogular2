@@ -1,10 +1,10 @@
-import { QueryList } from '@angular/core';
-import { VgFullscreenAPI } from './vg-fullscreen-api';
-import { VgUtils } from './vg-utils';
+import {QueryList} from "@angular/core";
+import {VgFullscreenAPI} from "./vg-fullscreen-api";
+import {VgUtils} from "./vg-utils";
 
 describe('Videogular Player', () => {
-    let medias: QueryList<any>;
-    let elem: HTMLElement;
+    let medias:QueryList<any>;
+    let elem:HTMLElement;
     let fsAPI: VgFullscreenAPI;
 
     beforeEach(() => {
@@ -27,7 +27,7 @@ describe('Videogular Player', () => {
     });
 
     it('Should request an element to enter in fullscreen mode (desktop)', () => {
-        spyOn(fsAPI, 'enterElementInFullScreen').and.callFake(() => undefined);
+        spyOn(fsAPI, 'enterElementInFullScreen').and.callFake(() => {});
 
         fsAPI.request(null);
 
@@ -36,8 +36,8 @@ describe('Videogular Player', () => {
     });
 
     it('Should request an element to enter in fullscreen mode (mobile)', () => {
-        spyOn(VgUtils, 'isMobileDevice').and.callFake(() => true);
-        spyOn(fsAPI, 'enterElementInFullScreen').and.callFake(() => undefined);
+        spyOn(VgUtils, 'isMobileDevice').and.callFake(() => {return true;});
+        spyOn(fsAPI, 'enterElementInFullScreen').and.callFake(() => {});
 
         fsAPI.request(null);
 
@@ -47,8 +47,8 @@ describe('Videogular Player', () => {
     });
 
     it('Should request an element to enter in fullscreen mode (mobile with param elem)', () => {
-        spyOn(VgUtils, 'isMobileDevice').and.callFake(() => true);
-        spyOn(fsAPI, 'enterElementInFullScreen').and.callFake(() => undefined);
+        spyOn(VgUtils, 'isMobileDevice').and.callFake(() => {return true;});
+        spyOn(fsAPI, 'enterElementInFullScreen').and.callFake(() => {});
 
         fsAPI.request(elem);
 
@@ -58,7 +58,7 @@ describe('Videogular Player', () => {
     });
 
     it('Should not request an element to enter in fullscreen mode', () => {
-        spyOn(fsAPI, 'enterElementInFullScreen').and.callFake(() => undefined);
+        spyOn(fsAPI, 'enterElementInFullScreen').and.callFake(() => {});
 
         fsAPI.nativeFullscreen = false;
         fsAPI.request(elem);
@@ -77,9 +77,9 @@ describe('Videogular Player', () => {
     it('Should request an element to exit from fullscreen mode (native)', () => {
         fsAPI.polyfill.exit = 'mockedExitFunction';
 
-        (<any>document).mockedExitFunction = () => undefined;
+        (<any>document).mockedExitFunction = () => {};
 
-        spyOn(document, 'mockedExitFunction').and.callThrough();
+        spyOn(document, 'mockedExitFunction' as any).and.callThrough();
 
         fsAPI.exit();
 
@@ -90,9 +90,9 @@ describe('Videogular Player', () => {
     it('Should request an element to exit from fullscreen mode (emulated)', () => {
         fsAPI.polyfill.exit = 'mockedExitFunction';
 
-        (<any>document).mockedExitFunction = () => undefined;
+        (<any>document).mockedExitFunction = () => {};
 
-        spyOn(document, 'mockedExitFunction').and.callThrough();
+        spyOn(document, 'mockedExitFunction' as any).and.callThrough();
 
         fsAPI.nativeFullscreen = false;
         fsAPI.exit();
@@ -104,7 +104,7 @@ describe('Videogular Player', () => {
     it('Should enter videogular element to fullscreen mode', () => {
         fsAPI.videogularElement = <HTMLElement>{id: 'vgElem'};
 
-        spyOn(fsAPI, 'request').and.callFake(() => undefined);
+        spyOn(fsAPI, 'request').and.callFake(() => {});
 
         fsAPI.toggleFullscreen();
 
@@ -112,11 +112,11 @@ describe('Videogular Player', () => {
     });
 
     it('Should enter other element to fullscreen mode', () => {
-        const element = {id: 'main'};
+        let element = {id: 'main'};
 
         fsAPI.videogularElement = <HTMLElement>{id: 'vgElem'};
 
-        spyOn(fsAPI, 'request').and.callFake(() => undefined);
+        spyOn(fsAPI, 'request').and.callFake(() => {});
 
         fsAPI.toggleFullscreen(element);
 
@@ -126,7 +126,7 @@ describe('Videogular Player', () => {
     it('Should exit from fullscreen mode', () => {
         fsAPI.isFullscreen = true;
 
-        spyOn(fsAPI, 'exit').and.callFake(() => undefined);
+        spyOn(fsAPI, 'exit').and.callFake(() => {});
 
         fsAPI.toggleFullscreen();
 

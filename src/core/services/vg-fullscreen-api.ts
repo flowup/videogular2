@@ -59,8 +59,8 @@ export class VgFullscreenAPI {
                 // see 'Non-standard methods' section: https://developer.mozilla.org/ru/docs/DOM/Using_fullscreen_mode
                 enabled: 'webkitFullscreenEnabled',
                 element: 'webkitFullscreenElement',
-                request: 'webkitRequestFullscreen',
-                exit: 'webkitCancelFullScreen',
+                request: 'webkitEnterFullscreen',
+                exit: 'webkitExitFullscreen',
                 onchange: 'webkitendfullscreen', // Hack for iOS: webkitfullscreenchange it's not firing
                 onerror: 'webkitfullscreenerror'
             },
@@ -140,6 +140,12 @@ export class VgFullscreenAPI {
         if (this.isAvailable && this.nativeFullscreen) {
             // Fullscreen for mobile devices
             if (VgUtils.isMobileDevice()) {
+                // We should make fullscreen the video object if it doesn't have native fullscreen support
+                // Fallback! We can't set vg-player on fullscreen, only video/audio objects
+                if ((!this.polyfill.enabled && elem === this.videogularElement) || VgUtils.isiOSDevice()) {
+                    elem = this.medias.toArray()[ 0 ].elem;
+                }
+
                 this.enterElementInFullScreen(elem);
             } else {
                 this.enterElementInFullScreen(this.videogularElement);

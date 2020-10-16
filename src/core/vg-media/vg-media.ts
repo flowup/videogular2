@@ -2,7 +2,7 @@ import { VgUtils } from './../services/vg-utils';
 import { ChangeDetectorRef, Directive, Input, OnDestroy, OnInit } from '@angular/core';
 import { PlayableModel, MediaSubscriptionsModel } from './i-playable';
 import { Observable, Subscription, Subject, fromEvent, timer, combineLatest } from 'rxjs';
-import { filter, take } from 'rxjs/operators';
+import { filter, take, map } from 'rxjs/operators';
 
 import { VgStates } from '../states/vg-states';
 import { VgAPI } from '../services/vg-api';
@@ -190,9 +190,8 @@ export class VgMediaDirective implements OnInit, OnDestroy, PlayableModel {
             }
         }
 
-        this.canPlayAllSubscription = combineLatest(
-            canPlayAll,
-            (...params) => {
+        this.canPlayAllSubscription = combineLatest(canPlayAll).pipe(
+            map((...params) => {
                 const HAVE_ENOUGH_DATA = 4;
                 const allReady: boolean = params.some((event: any) => event.target.readyState === HAVE_ENOUGH_DATA);
 

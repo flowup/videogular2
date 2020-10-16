@@ -1,21 +1,24 @@
-// import { VgQualitySelectorComponent } from './vg-quality-selector';
-// import { VgAPI } from '../../core/services/vg-api';
-// import { ElementRef } from '@angular/core';
+import { VgQualitySelector } from "./vg-quality-selector";
+import { VgAPI } from "../../core/services/vg-api";
+import { ElementRef } from "@angular/core";
 
 describe('Quality Selector control', () => {
-    // let vgQualitySelector: VgQualitySelectorComponent;
+    
+    // @ts-ignore
+    let vgQualitySelector: VgQualitySelector;
 
     beforeEach(() => {
-        // const ref: ElementRef = {
-        //     nativeElement: {
-        //         getAttribute: (name) =>
-        //             name
-        //     }
-        // };
-        // vgQualitySelector = new VgQualitySelectorComponent(ref, new VgAPI());
+        const ref: ElementRef = {
+            nativeElement: {
+                getAttribute: (name) => {
+                    return name;
+                }
+            }
+        };
+        vgQualitySelector = new VgQualitySelector(ref, new VgAPI());
     });
 
     describe('onPlayerReady', () => {
-        // TODO: Add test for player ready
+
     });
 });

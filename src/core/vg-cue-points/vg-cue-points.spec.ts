@@ -1,10 +1,11 @@
 import { ElementRef } from '@angular/core';
 
-import { VgCuePointsDirective } from './vg-cue-points';
+import { VgCuePoints } from './vg-cue-points';
+
 
 
 describe('Cue points', () => {
-    let cuePoints: VgCuePointsDirective;
+    let cuePoints: VgCuePoints;
     let ref: ElementRef;
 
     beforeEach(() => {
@@ -12,7 +13,7 @@ describe('Cue points', () => {
             nativeElement: document.createElement('div')
         };
 
-        cuePoints = new VgCuePointsDirective(ref);
+        cuePoints = new VgCuePoints(ref);
     });
 
     it('Should handle onLoad event', () => {
@@ -25,11 +26,11 @@ describe('Cue points', () => {
 
     xit('Should handle enter/exit events', () => {
 
-        const event = {
+        let event = {
             target: document.createElement('video')
         };
 
-        const track = event.target.addTextTrack('captions', 'test');
+        let track = event.target.addTextTrack('captions', 'test');
         track.addCue(new TextTrackCue(1, 2, 'cue 1')); // Illegal Constructor
 
         cuePoints.onLoad(event);
@@ -40,7 +41,7 @@ describe('Cue points', () => {
     it('Should handle onEnter event', () => {
         spyOn(cuePoints.onEnterCuePoint, 'emit').and.callThrough();
 
-        const event = {
+        let event = {
             target: {}
         };
 
@@ -52,7 +53,7 @@ describe('Cue points', () => {
     it('Should handle onExit event', () => {
         spyOn(cuePoints.onExitCuePoint, 'emit').and.callThrough();
 
-        const event = {
+        let event = {
             target: {}
         };
 

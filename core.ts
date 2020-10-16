@@ -2,11 +2,9 @@ export * from './src/core/core';
 
 // CustomEvent polyfill for IE9/10/11
 // tslint:disable-next-line:only-arrow-functions
-(function (): void {
+(function (): boolean {
 
-    if ( typeof window === 'undefined' || typeof window['CustomEvent'] === 'function' ) {
-        return;
-    }
+    if ( typeof window === "undefined" || typeof window['CustomEvent'] === "function" ) { return false; }
 
     function CustomEvent(event: string, params: any): CustomEvent<any> {
         params = params || { bubbles: false, cancelable: false, detail: undefined };
@@ -18,4 +16,5 @@ export * from './src/core/core';
     CustomEvent.prototype = window['Event'].prototype;
 
     window['CustomEvent'] = CustomEvent;
+    return true;
 })();

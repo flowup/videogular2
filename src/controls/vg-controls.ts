@@ -6,6 +6,7 @@ import { VgAPI } from '../core/services/vg-api';
 import { VgControlsHidden } from './../core/services/vg-controls-hidden';
 
 import { VgStates } from '../core/states/vg-states';
+import {fromEvent} from 'rxjs';
 
 @Component({
     selector: 'vg-controls',
@@ -49,7 +50,7 @@ export class VgControlsComponent implements OnInit, AfterViewInit, OnDestroy {
     touchStart$: Observable<any>;
 
     subscriptions: Subscription[] = [];
-
+    // @ts-ignore
     constructor(private API: VgAPI, ref: ElementRef, private hidden: VgControlsHidden) {
         this.elem = ref.nativeElement;
     }
@@ -127,7 +128,7 @@ export class VgControlsComponent implements OnInit, AfterViewInit, OnDestroy {
             this.timer = setTimeout(() => {
                 this.hideControls = true;
                 this.hidden.state(true);
-            },                      this.vgAutohideTime * 1000);
+            },this.vgAutohideTime * 1000);
         }
     }
 

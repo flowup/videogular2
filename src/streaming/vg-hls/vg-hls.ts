@@ -61,7 +61,7 @@ export class VgHLSDirective implements OnInit, OnChanges, OnDestroy {
             autoStartLoad: this.preload,
             liveSyncDurationCount: 1,
         };
-
+        // @ts-ignore
         this.config.xhrSetup = (xhr) => {
             // Send cookies
             if (this.crossorigin === 'use-credentials') {
@@ -149,7 +149,11 @@ export class VgHLSDirective implements OnInit, OnChanges, OnDestroy {
                     }
                 );
 
-                this.hls.loadSource(this.vgHls);
+    // @ts-ignore
+            this.hls.on(Hls.Events.LEVEL_LOADED, (event, data) => {
+                    this.target.isLive = data.details.live;
+                }
+            );            this.hls.loadSource(this.vgHls);
                 this.hls.attachMedia(video);
             } else if (video.canPlayType('application/vnd.apple.mpegurl')) {
                 video.src = this.vgHls;
@@ -179,5 +183,6 @@ export class VgHLSDirective implements OnInit, OnChanges, OnDestroy {
     ngOnDestroy(): void {
         this.subscriptions.forEach(s => s.unsubscribe());
         this.destroyPlayer();
+        delete this.hls;
     }
 }

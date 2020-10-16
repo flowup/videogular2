@@ -1,20 +1,24 @@
 {
     "compilerOptions": {
-        "sourceMap": true,
-        "removeComments": true,
-        "declaration": true,
-        "moduleResolution": "node",
+        "lib": ["es5", "es2015", "dom", "scripthost"],
+        "module": "commonjs",
+        "target": "es5",
+        "outDir": "compiled",
         "emitDecoratorMetadata": true,
         "experimentalDecorators": true,
-        "forceConsistentCasingInFileNames": true,
-        "newLine": "LF",
-        "noImplicitReturns": true,
         "noUnusedLocals": true,
         "noUnusedParameters": true,
-        "target": "es5",
+        "inlineSourceMap": true,
+        "inlineSources": true,
+        "declaration": true,
+        "moduleResolution": "node",
         // TODO: Enable this two rules from our TSConfig
         "noImplicitAny": false,
-        "strictNullChecks": false
+        "strictNullChecks": false,
+        "sourceMap": true,
+        "forceConsistentCasingInFileNames": true,
+        "newLine": "LF",
+        "noImplicitReturns": true
     },
     "exclude": [
         "docs/*",
@@ -22,6 +26,7 @@
         "coverage/*"
     ],
     "angularCompilerOptions": {
+        "skipTemplateCodegen": true,
         "genDir": "compiled"
     }
 }

@@ -1,4 +1,10 @@
 {
+    "linterOptions": {
+        "exclude": [
+            "node_modules/**/*",
+            "compiled/**/*"
+        ]
+    },
     "rulesDirectory": [
       "node_modules/codelyzer"
     ],
@@ -280,4 +286,3 @@
       ]
     }
   }
-  

@@ -1,10 +1,9 @@
-/* tslint:disable:no-magic-numbers */
-import { VgAPI } from './vg-api';
-import { PlayableModel } from '../vg-media/i-playable';
-import { VgStates } from '../states/vg-states';
+import {VgAPI} from "./vg-api";
+import {IPlayable} from "../vg-media/i-playable";
+import {VgStates} from "../states/vg-states";
 
 describe('Videogular Player', () => {
-    let api: VgAPI;
+    let api:VgAPI;
 
     beforeEach(() => {
         api = new VgAPI();
@@ -16,7 +15,7 @@ describe('Videogular Player', () => {
             secondary: {id: 'secondary'}
         };
 
-        expect(api.getDefaultMedia()).toEqual({id: 'main'});
+        expect(api.getDefaultMedia()).toEqual(<IPlayable>{id: 'main'});
     });
 
     describe('getMasterMedia', () => {
@@ -26,7 +25,7 @@ describe('Videogular Player', () => {
                 secondary: {id: 'secondary', vgMaster: true}
             };
 
-            expect(api.getMasterMedia()).toEqual({id: 'secondary', vgMaster: true});
+            expect(api.getMasterMedia()).toEqual(<any>{id: 'secondary', vgMaster: true});
         });
         it('Should get the default media when no master is defined', () => {
             api.medias = {
@@ -44,7 +43,7 @@ describe('Videogular Player', () => {
             secondary: {id: 'secondary'}
         };
 
-        expect(api.getMediaById()).toEqual(api);
+        expect(api.getMediaById()).toEqual(<any>api);
     });
 
     it('Should get the api if we pass an *', () => {
@@ -53,7 +52,7 @@ describe('Videogular Player', () => {
             secondary: {id: 'secondary'}
         };
 
-        expect(api.getMediaById('*')).toEqual(api);
+        expect(api.getMediaById('*')).toEqual(<any>api);
     });
 
     it('Should get a media object if we pass an id', () => {
@@ -62,13 +61,13 @@ describe('Videogular Player', () => {
             secondary: {id: 'secondary'}
         };
 
-        expect(api.getMediaById('main')).toEqual({id: 'main'});
+        expect(api.getMediaById('main')).toEqual(<IPlayable>{id: 'main'});
     });
 
     it('Should play all medias', () => {
         api.medias = {
-            main: {id: 'main', play: () => undefined},
-            secondary: {id: 'secondary', play: () => undefined}
+            main: {id: 'main', play: () => {}},
+            secondary: {id: 'secondary', play: () => {}}
         };
 
         spyOn((<any>api.medias).main, 'play').and.callThrough();
@@ -82,8 +81,8 @@ describe('Videogular Player', () => {
 
     it('Should pause all medias', () => {
         api.medias = {
-            main: {id: 'main', pause: () => undefined},
-            secondary: {id: 'secondary', pause: () => undefined}
+            main: {id: 'main', pause: () => {}},
+            secondary: {id: 'secondary', pause: () => {}}
         };
 
         spyOn((<any>api.medias).main, 'pause').and.callThrough();
@@ -96,16 +95,15 @@ describe('Videogular Player', () => {
     });
 
     it('Should get duration', () => {
-        spyOn(api, '$$getAllProperties').and.callFake(() => undefined);
-
-        // tslint:disable-next-line:no-unused-expression
-        api.duration;
+        spyOn(api, '$$getAllProperties').and.callFake(() => {});
+        // @ts-ignore
+        let duration = api.duration;
 
         expect(api.$$getAllProperties).toHaveBeenCalledWith('duration');
     });
 
     it('Should set a state', () => {
-        spyOn(api, '$$setAllProperties').and.callFake(() => undefined);
+        spyOn(api, '$$setAllProperties').and.callFake(() => {});
 
         api.state = 'pause';
 
@@ -113,16 +111,15 @@ describe('Videogular Player', () => {
     });
 
     it('Should get state', () => {
-        spyOn(api, '$$getAllProperties').and.callFake(() => undefined);
-
-        // tslint:disable-next-line:no-unused-expression
-        api.state;
+        spyOn(api, '$$getAllProperties').and.callFake(() => {});
+        // @ts-ignore
+        let state = api.state;
 
         expect(api.$$getAllProperties).toHaveBeenCalledWith('state');
     });
 
     it('Should set a currentTime', () => {
-        spyOn(api, '$$setAllProperties').and.callFake(() => undefined);
+        spyOn(api, '$$setAllProperties').and.callFake(() => {});
 
         api.currentTime = 50;
 
@@ -130,16 +127,15 @@ describe('Videogular Player', () => {
     });
 
     it('Should get currentTime', () => {
-        spyOn(api, '$$getAllProperties').and.callFake(() => undefined);
-
-        // tslint:disable-next-line:no-unused-expression
-        api.currentTime;
+        spyOn(api, '$$getAllProperties').and.callFake(() => {});
+        // @ts-ignore
+        let currentTime = api.currentTime;
 
         expect(api.$$getAllProperties).toHaveBeenCalledWith('currentTime');
     });
 
     it('Should set a volume', () => {
-        spyOn(api, '$$setAllProperties').and.callFake(() => undefined);
+        spyOn(api, '$$setAllProperties').and.callFake(() => {});
 
         api.volume = 0.5;
 
@@ -147,16 +143,15 @@ describe('Videogular Player', () => {
     });
 
     it('Should get volume', () => {
-        spyOn(api, '$$getAllProperties').and.callFake(() => undefined);
-
-        // tslint:disable-next-line:no-unused-expression
-        api.volume;
+        spyOn(api, '$$getAllProperties').and.callFake(() => {});
+        // @ts-ignore
+        let volume = api.volume;
 
         expect(api.$$getAllProperties).toHaveBeenCalledWith('volume');
     });
 
     it('Should set a playback rate', () => {
-        spyOn(api, '$$setAllProperties').and.callFake(() => undefined);
+        spyOn(api, '$$setAllProperties').and.callFake(() => {});
 
         api.playbackRate = 0.5;
 
@@ -164,91 +159,81 @@ describe('Videogular Player', () => {
     });
 
     it('Should get playbackRate', () => {
-        spyOn(api, '$$getAllProperties').and.callFake(() => undefined);
-
-        // tslint:disable-next-line:no-unused-expression
-        api.playbackRate;
+        spyOn(api, '$$getAllProperties').and.callFake(() => {});
+        // @ts-ignore
+        let playbackRate = api.playbackRate;
 
         expect(api.$$getAllProperties).toHaveBeenCalledWith('playbackRate');
     });
 
     it('Should get canPlay', () => {
-        spyOn(api, '$$getAllProperties').and.callFake(() => undefined);
-
-        // tslint:disable-next-line:no-unused-expression
-        api.canPlay;
+        spyOn(api, '$$getAllProperties').and.callFake(() => {});
+        // @ts-ignore
+        let canPlay = api.canPlay;
 
         expect(api.$$getAllProperties).toHaveBeenCalledWith('canPlay');
     });
 
     it('Should get canPlayThrough', () => {
-        spyOn(api, '$$getAllProperties').and.callFake(() => undefined);
-
-        // tslint:disable-next-line:no-unused-expression
-        api.canPlayThrough;
+        spyOn(api, '$$getAllProperties').and.callFake(() => {});
+        // @ts-ignore
+        let canPlayThrough = api.canPlayThrough;
 
         expect(api.$$getAllProperties).toHaveBeenCalledWith('canPlayThrough');
     });
 
     it('Should get isMetadataLoaded', () => {
-        spyOn(api, '$$getAllProperties').and.callFake(() => undefined);
-
-        // tslint:disable-next-line:no-unused-expression
-        api.isMetadataLoaded;
+        spyOn(api, '$$getAllProperties').and.callFake(() => {});
+        // @ts-ignore
+        let isMetadataLoaded = api.isMetadataLoaded;
 
         expect(api.$$getAllProperties).toHaveBeenCalledWith('isMetadataLoaded');
     });
 
     it('Should get isWaiting', () => {
-        spyOn(api, '$$getAllProperties').and.callFake(() => undefined);
-
-        // tslint:disable-next-line:no-unused-expression
-        api.isWaiting;
+        spyOn(api, '$$getAllProperties').and.callFake(() => {});
+        // @ts-ignore
+        let isWaiting = api.isWaiting;
 
         expect(api.$$getAllProperties).toHaveBeenCalledWith('isWaiting');
     });
 
     it('Should get isCompleted', () => {
-        spyOn(api, '$$getAllProperties').and.callFake(() => undefined);
-
-        // tslint:disable-next-line:no-unused-expression
-        api.isCompleted;
+        spyOn(api, '$$getAllProperties').and.callFake(() => {});
+        // @ts-ignore
+        let isCompleted = api.isCompleted;
 
         expect(api.$$getAllProperties).toHaveBeenCalledWith('isCompleted');
     });
 
     it('Should get time', () => {
-        spyOn(api, '$$getAllProperties').and.callFake(() => undefined);
-
-        // tslint:disable-next-line:no-unused-expression
-        api.time;
+        spyOn(api, '$$getAllProperties').and.callFake(() => {});
+        // @ts-ignore
+        let time = api.time;
 
         expect(api.$$getAllProperties).toHaveBeenCalledWith('time');
     });
 
     it('Should get buffer', () => {
-        spyOn(api, '$$getAllProperties').and.callFake(() => undefined);
-
-        // tslint:disable-next-line:no-unused-expression
-        api.buffer;
+        spyOn(api, '$$getAllProperties').and.callFake(() => {});
+        // @ts-ignore
+        let time = api.buffer;
 
         expect(api.$$getAllProperties).toHaveBeenCalledWith('buffer');
     });
 
     it('Should get buffered', () => {
-        spyOn(api, '$$getAllProperties').and.callFake(() => undefined);
-
-        // tslint:disable-next-line:no-unused-expression
-        api.buffered;
+        spyOn(api, '$$getAllProperties').and.callFake(() => {});
+        // @ts-ignore
+        let buffered = api.buffered;
 
         expect(api.$$getAllProperties).toHaveBeenCalledWith('buffered');
     });
 
     it('Should get subscriptions', () => {
-        spyOn(api, '$$getAllProperties').and.callFake(() => undefined);
-
-        // tslint:disable-next-line:no-unused-expression
-        api.subscriptions;
+        spyOn(api, '$$getAllProperties').and.callFake(() => {});
+        // @ts-ignore
+        let subscriptions = api.subscriptions;
 
         expect(api.$$getAllProperties).toHaveBeenCalledWith('subscriptions');
     });
@@ -259,12 +244,12 @@ describe('Videogular Player', () => {
             secondary: {id: 'secondary'}
         };
 
-        spyOn(api, '$$seek').and.callFake(() => undefined);
+        spyOn(api, '$$seek').and.callFake(() => {});
 
         api.seekTime(10);
 
-        expect(api.$$seek).toHaveBeenCalledWith({id: 'main'}, 10, false);
-        expect(api.$$seek).toHaveBeenCalledWith({id: 'secondary'}, 10, false);
+        expect(api.$$seek).toHaveBeenCalledWith(<IPlayable>{id: 'main'}, 10, false);
+        expect(api.$$seek).toHaveBeenCalledWith(<IPlayable>{id: 'secondary'}, 10, false);
     });
 
     it('Should seek to a specified time by percentage', () => {
@@ -273,26 +258,26 @@ describe('Videogular Player', () => {
             secondary: {id: 'secondary'}
         };
 
-        spyOn(api, '$$seek').and.callFake(() => undefined);
+        spyOn(api, '$$seek').and.callFake(() => {});
 
         api.seekTime(10, true);
 
-        expect(api.$$seek).toHaveBeenCalledWith({id: 'main'}, 10, true);
-        expect(api.$$seek).toHaveBeenCalledWith({id: 'secondary'}, 10, true);
+        expect(api.$$seek).toHaveBeenCalledWith(<IPlayable>{id: 'main'}, 10, true);
+        expect(api.$$seek).toHaveBeenCalledWith(<IPlayable>{id: 'secondary'}, 10, true);
     });
 
     it('Should seek media files to a specified time by second', () => {
-        const media = {
+        let media = {
             currentTime: 0
         };
 
-        api.$$seek(<PlayableModel>media, 10);
+        api.$$seek(<IPlayable>media, 10);
 
         expect(media.currentTime).toBe(10);
     });
 
     it('Should seek media files to a specified time by percentage', () => {
-        const media = {
+        let media = {
             duration: 200,
             currentTime: 0,
             subscriptions: {}
@@ -309,7 +294,7 @@ describe('Videogular Player', () => {
             secondary: {id: 'secondary', state: VgStates.VG_PAUSED}
         };
 
-        const states = api.$$getAllProperties('state');
+        let states = api.$$getAllProperties('state');
 
         expect(states).toEqual(VgStates.VG_PLAYING);
     });
@@ -319,7 +304,7 @@ describe('Videogular Player', () => {
             main: {id: 'main', state: VgStates.VG_PLAYING}
         };
 
-        const states = api.$$getAllProperties('state');
+        let states = api.$$getAllProperties('state');
 
         expect(states).toEqual(VgStates.VG_PLAYING);
     });
@@ -337,18 +322,18 @@ describe('Videogular Player', () => {
     });
 
     it('Should register a new media object', () => {
-        const media = {id: 'main'};
+        let media = {id: 'main'};
 
-        api.registerMedia(<PlayableModel>media);
+        api.registerMedia(<IPlayable>media);
 
         expect(api.medias['main']).toBe(media);
     });
 
     it('Should register a new media object', () => {
-        const media = {id: 'main'};
+        let media = {id: 'main'};
         api['main'] = {};
 
-        api.unregisterMedia(<PlayableModel>media);
+        api.unregisterMedia(<IPlayable>media);
 
         expect(api.medias['main']).toBe(undefined);
     });
