@@ -1,6 +1,6 @@
-import { IMediaElement } from './i-media-element';
+import { MediaElementModel } from './i-media-element';
 
-export class VgMediaElement implements IMediaElement {
+export class VgMediaElement implements MediaElementModel {
     id: string;
     elem: any;
     get audioTracks(): AudioTrackList { return null; }
@@ -40,6 +40,7 @@ export class VgMediaElement implements IMediaElement {
     src: string;
     srcObject: MediaStream | any;
     textTracks: TextTrackList;
+    totalTime: number;
     videoTracks: VideoTrackList;
     volume: number;
     HAVE_CURRENT_DATA: number;

@@ -151,7 +151,7 @@ export class VgHLSDirective implements OnInit, OnChanges, OnDestroy {
 
     // @ts-ignore
             this.hls.on(Hls.Events.LEVEL_LOADED, (event, data) => {
-                    this.target.isLive = data.details.live;
+                    this.target.isLivestream = data.details.live;
                 }
             );            this.hls.loadSource(this.vgHls);
                 this.hls.attachMedia(video);

@@ -1,11 +1,11 @@
 import { ElementRef } from '@angular/core';
 
-import { VgCuePoints } from './vg-cue-points';
+import { VgCuePointsDirective } from './vg-cue-points';
 
 
 
 describe('Cue points', () => {
-    let cuePoints: VgCuePoints;
+    let cuePoints: VgCuePointsDirective;
     let ref: ElementRef;
 
     beforeEach(() => {
@@ -13,7 +13,7 @@ describe('Cue points', () => {
             nativeElement: document.createElement('div')
         };
 
-        cuePoints = new VgCuePoints(ref);
+        cuePoints = new VgCuePointsDirective(ref);
     });
 
     it('Should handle onLoad event', () => {

@@ -1,10 +1,10 @@
-import { VgFullscreen } from './vg-fullscreen';
+import { VgFullscreenComponent } from './vg-fullscreen';
 import { VgAPI } from '../../core/services/vg-api';
 import { ElementRef } from '@angular/core';
 import { VgFullscreenAPI } from '../../core/services/vg-fullscreen-api';
 
 describe('Videogular Player', () => {
-  let fullscreen: VgFullscreen;
+  let fullscreen: VgFullscreenComponent;
   let ref: ElementRef;
   let api: VgAPI;
   let fsAPI: VgFullscreenAPI;
@@ -20,7 +20,7 @@ describe('Videogular Player', () => {
 
     api = new VgAPI();
     fsAPI = new VgFullscreenAPI();
-    fullscreen = new VgFullscreen(ref, api, fsAPI);
+    fullscreen = new VgFullscreenComponent(ref, api, fsAPI);
   });
 
   it('Should get media by id on init', () => {

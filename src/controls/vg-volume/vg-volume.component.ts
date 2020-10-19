@@ -88,7 +88,7 @@ import { Subscription } from 'rxjs';
     `
   ]
 })
-export class VgVolume implements OnInit, OnDestroy {
+export class VgVolumeComponent implements OnInit, OnDestroy {
   @Input() vgFor: string;
   @ViewChild('volumeBar', { static: true })
   volumeBarRef: ElementRef;

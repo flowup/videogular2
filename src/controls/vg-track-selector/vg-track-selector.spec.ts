@@ -1,9 +1,9 @@
-import { VgTrackSelector } from './vg-track-selector';
+import { VgTrackSelectorComponent } from './vg-track-selector';
 import { VgAPI } from '../../core/services/vg-api';
 import { ElementRef } from '@angular/core';
 
 describe('Track Selector control', () => {
-  let vgTrackSelector: VgTrackSelector;
+  let vgTrackSelector: VgTrackSelectorComponent;
 
   function createSubtitleTrack(label: string, srclang: string, isDefault: boolean) {
     const track: HTMLTrackElement = {} as HTMLTrackElement;
@@ -23,7 +23,7 @@ describe('Track Selector control', () => {
         }
       }
     };
-    vgTrackSelector = new VgTrackSelector(ref, new VgAPI());
+    vgTrackSelector = new VgTrackSelectorComponent(ref, new VgAPI());
   });
 
   describe('onPlayerReady', () => {

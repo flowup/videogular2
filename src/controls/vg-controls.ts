@@ -3,10 +3,9 @@ import {
 } from '@angular/core';
 import { Observable, Subscription, fromEvent } from 'rxjs';
 import { VgAPI } from '../core/services/vg-api';
-import { VgControlsHidden } from './../core/services/vg-controls-hidden';
+import { VgControlsHidden } from '../core/services/vg-controls-hidden';
 
 import { VgStates } from '../core/states/vg-states';
-import {fromEvent} from 'rxjs';
 
 @Component({
     selector: 'vg-controls',

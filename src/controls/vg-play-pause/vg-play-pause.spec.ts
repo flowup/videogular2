@@ -1,10 +1,10 @@
-import { VgPlayPause } from './vg-play-pause';
+import { VgPlayPauseComponent } from './vg-play-pause';
 import { VgAPI } from '../../core/services/vg-api';
 import { ElementRef } from '@angular/core';
 import { VgStates } from '../../core/states/vg-states';
 
 describe('Play/Pause Button', () => {
-  let playPause: VgPlayPause;
+  let playPause: VgPlayPauseComponent;
   let ref: ElementRef;
   let api: VgAPI;
 
@@ -27,7 +27,7 @@ describe('Play/Pause Button', () => {
       }
     };
 
-    playPause = new VgPlayPause(ref, api);
+    playPause = new VgPlayPauseComponent(ref, api);
   });
 
   it('Should get media by id on init', () => {

@@ -3,7 +3,7 @@ import { CommonModule } from '@angular/common';
 import { VgControlsComponent } from './vg-controls';
 import { VgFullscreenComponent } from './vg-fullscreen/vg-fullscreen';
 import { VgMuteComponent } from './vg-mute/vg-mute';
-import { VgVolumeComponent } from './vg-volume/vg-volume';
+import { VgVolumeComponent } from './vg-volume/vg-volume.component';
 import { VgPlayPauseComponent } from './vg-play-pause/vg-play-pause';
 import { VgPlaybackButtonComponent } from './vg-playback-button/vg-playback-button';
 import { VgScrubBarComponent } from './vg-scrub-bar/vg-scrub-bar';

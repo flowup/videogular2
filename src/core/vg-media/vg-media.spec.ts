@@ -1,4 +1,4 @@
-import { VgMedia } from "./vg-media";
+import { VgMediaDirective } from "./vg-media";
 import { VgAPI } from "../services/vg-api";
 import { ChangeDetectorRef } from "@angular/core";
 import { VgStates } from "../states/vg-states";
@@ -7,7 +7,7 @@ import { fakeAsync, tick } from '@angular/core/testing';
 
 
 describe('Videogular Media', () => {
-    let media:VgMedia;
+    let media:VgMediaDirective;
     let cdRef:ChangeDetectorRef;
     let api:VgAPI;
     let elem = new VgMediaElement();
@@ -32,7 +32,7 @@ describe('Videogular Media', () => {
             checkNoChanges: () => {}
         };
         api = new VgAPI();
-        media = new VgMedia(api, cdRef);
+        media = new VgMediaDirective(api, cdRef);
         media.vgMedia = elem;
         elem.currentTime = 0;
     });
@@ -97,7 +97,7 @@ describe('Videogular Media', () => {
     it('Should handle onCanPlay native event', () => {
         expect(media.canPlay).toBeFalsy();
 
-        media.onCanPlay({});
+        media.onCanPlay();
 
         expect(media.canPlay).toBeTruthy();
     });
@@ -105,7 +105,7 @@ describe('Videogular Media', () => {
     it('Should handle onCanPlayThrough native event', () => {
         expect(media.canPlayThrough).toBeFalsy();
 
-        media.onCanPlayThrough({});
+        media.onCanPlayThrough();
 
         expect(media.canPlayThrough).toBeTruthy();
     });
@@ -113,7 +113,7 @@ describe('Videogular Media', () => {
     it('Should handle onLoadMetadata native event', () => {
         expect(media.isMetadataLoaded).toBeFalsy();
 
-        media.onLoadMetadata({});
+        media.onLoadMetadata();
 
         expect(media.isMetadataLoaded).toBeTruthy();
         expect(media.time.total).toBe(100000);
@@ -122,7 +122,7 @@ describe('Videogular Media', () => {
     it('Should handle onWait native event', () => {
         expect(media.isWaiting).toBeFalsy();
 
-        media.onWait({});
+        media.onWait();
 
         expect(media.isWaiting).toBeTruthy();
     });
@@ -131,7 +131,7 @@ describe('Videogular Media', () => {
         expect(media.isCompleted).toBeFalsy();
 
         media.state = VgStates.VG_PLAYING;
-        media.onComplete({});
+        media.onComplete();
 
         expect(media.isCompleted).toBeTruthy();
         expect(media.state).toBe(VgStates.VG_ENDED);
@@ -140,7 +140,7 @@ describe('Videogular Media', () => {
     it('Should handle onStartPlaying native event', () => {
         expect(media.state).toBe(VgStates.VG_PAUSED);
 
-        media.onStartPlaying({});
+        media.onStartPlaying();
 
         expect(media.state).toBe(VgStates.VG_PLAYING);
     });
@@ -148,7 +148,7 @@ describe('Videogular Media', () => {
     it('Should handle onPlay native event', () => {
         expect(media.state).toBe(VgStates.VG_PAUSED);
 
-        media.onPlay({});
+        media.onPlay();
 
         expect(media.state).toBe(VgStates.VG_PLAYING);
     });
@@ -156,7 +156,7 @@ describe('Videogular Media', () => {
     it('Should handle onPause native event', () => {
         media.state = VgStates.VG_PLAYING;
 
-        media.onPause({});
+        media.onPause();
 
         expect(media.state).toBe(VgStates.VG_PAUSED);
     });
@@ -164,7 +164,7 @@ describe('Videogular Media', () => {
     it('Should handle onTimeUpdate native event (with buffer)', () => {
         elem.currentTime = 25;
 
-        media.onTimeUpdate({});
+        media.onTimeUpdate();
 
         expect(media.time.current).toBe(25000);
         expect(media.time.left).toBe(75000);
@@ -179,7 +179,7 @@ describe('Videogular Media', () => {
             end: () => {return 0;}
         };
 
-        media.onTimeUpdate({});
+        media.onTimeUpdate();
 
         expect(media.time.current).toBe(25000);
         expect(media.time.left).toBe(75000);
@@ -193,7 +193,7 @@ describe('Videogular Media', () => {
     });
 
     it('Should handle onProgress native event (with buffer)', () => {
-        media.onProgress({});
+        media.onProgress();
 
         expect(media.buffer.end).toBe(50000);
     });
@@ -205,7 +205,7 @@ describe('Videogular Media', () => {
             end: () => {return 0;}
         };
 
-        media.onProgress({});
+        media.onProgress();
 
         expect(media.buffer.end).toBe(0);
 

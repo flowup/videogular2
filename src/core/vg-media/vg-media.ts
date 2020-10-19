@@ -1,4 +1,4 @@
-import { VgUtils } from './../services/vg-utils';
+import { VgUtils } from '../services/vg-utils';
 import { ChangeDetectorRef, Directive, Input, OnDestroy, OnInit } from '@angular/core';
 import { PlayableModel, MediaSubscriptionsModel } from './i-playable';
 import { Observable, Subscription, Subject, fromEvent, timer, combineLatest } from 'rxjs';
@@ -200,7 +200,7 @@ export class VgMediaDirective implements OnInit, OnDestroy, PlayableModel {
                     this.syncSubscription.unsubscribe();
                 }
             }
-        ).subscribe();
+        )).subscribe();
     }
 
     startSync(): void {

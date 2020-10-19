@@ -1,5 +1,5 @@
 import {VgAPI} from "./vg-api";
-import {IPlayable} from "../vg-media/i-playable";
+import {PlayableModel} from "../vg-media/i-playable";
 import {VgStates} from "../states/vg-states";
 
 describe('Videogular Player', () => {
@@ -15,7 +15,7 @@ describe('Videogular Player', () => {
             secondary: {id: 'secondary'}
         };
 
-        expect(api.getDefaultMedia()).toEqual(<IPlayable>{id: 'main'});
+        expect(api.getDefaultMedia()).toEqual(<PlayableModel>{id: 'main'});
     });
 
     describe('getMasterMedia', () => {
@@ -61,7 +61,7 @@ describe('Videogular Player', () => {
             secondary: {id: 'secondary'}
         };
 
-        expect(api.getMediaById('main')).toEqual(<IPlayable>{id: 'main'});
+        expect(api.getMediaById('main')).toEqual(<PlayableModel>{id: 'main'});
     });
 
     it('Should play all medias', () => {
@@ -248,8 +248,8 @@ describe('Videogular Player', () => {
 
         api.seekTime(10);
 
-        expect(api.$$seek).toHaveBeenCalledWith(<IPlayable>{id: 'main'}, 10, false);
-        expect(api.$$seek).toHaveBeenCalledWith(<IPlayable>{id: 'secondary'}, 10, false);
+        expect(api.$$seek).toHaveBeenCalledWith(<PlayableModel>{id: 'main'}, 10, false);
+        expect(api.$$seek).toHaveBeenCalledWith(<PlayableModel>{id: 'secondary'}, 10, false);
     });
 
     it('Should seek to a specified time by percentage', () => {
@@ -262,8 +262,8 @@ describe('Videogular Player', () => {
 
         api.seekTime(10, true);
 
-        expect(api.$$seek).toHaveBeenCalledWith(<IPlayable>{id: 'main'}, 10, true);
-        expect(api.$$seek).toHaveBeenCalledWith(<IPlayable>{id: 'secondary'}, 10, true);
+        expect(api.$$seek).toHaveBeenCalledWith(<PlayableModel>{id: 'main'}, 10, true);
+        expect(api.$$seek).toHaveBeenCalledWith(<PlayableModel>{id: 'secondary'}, 10, true);
     });
 
     it('Should seek media files to a specified time by second', () => {
@@ -271,7 +271,7 @@ describe('Videogular Player', () => {
             currentTime: 0
         };
 
-        api.$$seek(<IPlayable>media, 10);
+        api.$$seek(<PlayableModel>media, 10);
 
         expect(media.currentTime).toBe(10);
     });
@@ -324,7 +324,7 @@ describe('Videogular Player', () => {
     it('Should register a new media object', () => {
         let media = {id: 'main'};
 
-        api.registerMedia(<IPlayable>media);
+        api.registerMedia(<PlayableModel>media);
 
         expect(api.medias['main']).toBe(media);
     });
@@ -333,7 +333,7 @@ describe('Videogular Player', () => {
         let media = {id: 'main'};
         api['main'] = {};
 
-        api.unregisterMedia(<IPlayable>media);
+        api.unregisterMedia(<PlayableModel>media);
 
         expect(api.medias['main']).toBe(undefined);
     });

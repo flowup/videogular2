@@ -63,7 +63,7 @@
     "coverage": "http-server -c-1 -o -s -p 9875 ./coverage",
     "start": "run-p \"watch:ts\" \"start:coverage-server\"",
     "start:coverage-server": "http-server -c-1 -o -p 9875 ./coverage",
-    "test": "karma start karma.conf.js",
+    "test": "",
     "posttest": "remap-istanbul -i ./coverage/coverage-final.json -o coverage -t html",
     "report-coverage": "cat ./coverage/coverage-final.json | ./node_modules/.bin/remap-istanbul -o coverage-remapped.json",
     "semantic-release": "semantic-release && npm publish && semantic-release post",

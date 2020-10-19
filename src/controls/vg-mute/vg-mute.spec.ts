@@ -1,9 +1,9 @@
-import { VgMute } from './vg-mute';
+import { VgMuteComponent } from './vg-mute';
 import { VgAPI } from '../../core/services/vg-api';
 import { ElementRef } from '@angular/core';
 
 describe('Mute Button', () => {
-  let mute: VgMute;
+  let mute: VgMuteComponent;
   let ref: ElementRef;
   let api: VgAPI;
 
@@ -28,7 +28,7 @@ describe('Mute Button', () => {
       }
     };
 
-    mute = new VgMute(ref, api);
+    mute = new VgMuteComponent(ref, api);
   });
 
   it('Should get media by id on init', () => {
